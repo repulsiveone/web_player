@@ -1,0 +1,138 @@
+body {
+    background-color: rgb(119, 119, 119);
+    
+    /* Плавный переход цвета фона */
+    transition: background-color .5s;
+    }
+    
+    /* выравнивание элементов по вертикали */
+    .player {
+    height: 95vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    }
+    
+    .details {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 25px;
+    }
+    
+    .track-art {
+    margin: 25px;
+    height: 250px;
+    width: 250px;
+    background-image: URL(
+        "https://i.ytimg.com/vi/1ef84q46-hs/hqdefault.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 15%;
+    }
+    
+    /* размеры шрифтов */
+    .now-playing {
+    font-size: 1rem;
+    }
+    
+    .track-name {
+    font-size: 3rem;
+    }
+    
+    .track-artist {
+    font-size: 1.5rem;
+    }
+    
+    /*выравнивание элементов по горизонтали */
+    .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    }
+    
+    .playpause-track,
+    .prev-track,
+    .next-track {
+    padding: 25px;
+    opacity: 0.8;
+    
+    /* Плавный переход непрозрачности */
+    transition: opacity .2s;
+    }
+    
+    /* непрозрачность при наведении мыши */
+    .playpause-track:hover,
+    .prev-track:hover,
+    .next-track:hover {
+    opacity: 1.0;
+    }
+    
+    /* ширина ползунка, чтобы он правильно масштабировался */
+    .slider_container {
+    width: 75%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+    
+    /* внешний вид слайдера */
+    .seek_slider, .volume_slider {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    height: 5px;
+    background: black;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    }
+    
+    /* внешний вид ползунков     */
+    .seek_slider::-webkit-slider-thumb,
+    .volume_slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: white;
+    cursor: pointer;
+    border-radius: 50%;
+    }
+    
+    /* ширина ползунков и тд */
+    .seek_slider:hover,
+    .volume_slider:hover {
+    opacity: 1.0;
+    }
+    
+    .seek_slider {
+    width: 60%;
+    }
+    
+    .volume_slider {
+    width: 30%;
+    }
+    
+    .current-time,
+    .total-duration {
+    padding: 10px;
+    }
+    
+    i.fa-volume-down,
+    i.fa-volume-up {
+    padding: 10px;
+    }
+    
+    /* курсор мыши когда наводишь */
+    i.fa-play-circle,
+    i.fa-pause-circle,
+    i.fa-step-forward,
+    i.fa-step-backward {
+    cursor: pointer;
+    }
+    

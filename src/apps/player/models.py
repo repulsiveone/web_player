@@ -3,14 +3,14 @@ from django.contrib.auth.models import AbstractUser
 
 
 class TrackList(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     duration = models.IntegerField()
-    localion = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
 
 
 class CustomUser(AbstractUser):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     last_name = None
     first_name = None
     last_login = None
@@ -23,6 +23,6 @@ class CustomUser(AbstractUser):
 
 
 class UserMusic(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     track = models.ForeignKey(TrackList, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

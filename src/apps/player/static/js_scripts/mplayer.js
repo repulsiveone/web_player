@@ -28,7 +28,7 @@ let curr_track = document.createElement('audio');
 let track_list = [
 {
 	name: "Mana break",
-	artist: "ZXCURSED",
+	artist: "zxcursed",
 	image: data[track_index].image,
 	path: data[track_index].path
 },
@@ -41,7 +41,7 @@ let track_list = [
 ];
 
 function loadTrack(track_index) {
-// обнуляет ползунок после предыдущего трека 
+// обнуляет ползунок после предыдущего трека
 clearInterval(updateTimer);
 resetValues();
 }
@@ -74,11 +74,11 @@ function loadTrack(track_index) {
     // Очистить предыдущий таймер трека
     clearInterval(updateTimer);
     resetValues();
-    
+
     // лоадит новый трек х2
     curr_track.src = data[track_index].path;
     curr_track.load();
-    
+
     // Обновляет инфу о треке
     track_art.style.backgroundImage =
         "url(" + track_list[track_index].image + ")";
@@ -86,14 +86,14 @@ function loadTrack(track_index) {
     track_artist.textContent = track_list[track_index].artist;
     now_playing.textContent =
         "PLAYING " + (track_index + 1) + " OF " + track_list.length;
-    
+
     //интервал в 1000 миллисекунд для обновления бегунка поиска
     updateTimer = setInterval(seekUpdate, 1000);
-    
+
     // переход к следующему треку если текущий закончил воспроизведение
     curr_track.addEventListener("ended", nextTrack);
     }
-    
+
     // Функция для сброса всех значений по умолчанию
     function resetValues() {
     curr_time.textContent = "00:00";
@@ -106,25 +106,25 @@ function loadTrack(track_index) {
         if (!isPlaying) playTrack();
         else pauseTrack();
         }
-        
+
         function playTrack() {
         // Воспроизвести загруженный трек
         curr_track.play();
         isPlaying = true;
-        
+
         // замена значка на значок паузы
         playpause_btn.innerHTML = '<i class="fa fa-pause-circle fa-5x"></i>';
         }
-        
+
         function pauseTrack() {
         // пауз трек
         curr_track.pause();
         isPlaying = false;
-        
+
         // замена значка на значок воспроизведения
         playpause_btn.innerHTML = '<i class="fa fa-play-circle fa-5x"></i>';
         }
-        
+
         function nextTrack() {
        // вернуться к первому треку если это последний трек
         if (track_index < track_list.length - 1)
@@ -135,13 +135,13 @@ function loadTrack(track_index) {
         loadTrack(track_index);
         playTrack();
         }
-        
+
         function prevTrack() {
         // Вернуться к последней дорожке если текущий стоит первым в списке треков
         if (track_index > 0)
             track_index -= 1;
         else track_index = track_list.length - 1;
-        
+
         // загрузить и запустить новый трек
         loadTrack(track_index);
         playTrack();
@@ -151,37 +151,37 @@ function loadTrack(track_index) {
             // расчитывает позицию поиска по проценту ползунка поиска
              // = относительная длительность трека
             seekto = curr_track.duration * (seek_slider.value / 100);
-            
+
             // устанавливает текущую позицию трека на рассчитанную позицию ползунка
             curr_track.currentTime = seekto;
             }
-            
+
             function setVolume() {
             // установка громкости в соответствии с
              // процентом установленного ползунка громкости
             curr_track.volume = volume_slider.value / 100;
             }
-            
+
             function seekUpdate() {
             let seekPosition = 0;
-            
+
             // Проверяем, является ли продолжительность текущей дорожки разборчивым числом
             if (!isNaN(curr_track.duration)) {
                 seekPosition = curr_track.currentTime * (100 / curr_track.duration);
                 seek_slider.value = seekPosition;
-            
+
                 // расчитывает оставшееся время и общую продолжительность
                 let currentMinutes = Math.floor(curr_track.currentTime / 60);
                 let currentSeconds = Math.floor(curr_track.currentTime - currentMinutes * 60);
                 let durationMinutes = Math.floor(curr_track.duration / 60);
                 let durationSeconds = Math.floor(curr_track.duration - durationMinutes * 60);
-            
+
                 // добавляет ноль к значениям времени
                 if (currentSeconds < 10) { currentSeconds = "0" + currentSeconds; }
                 if (durationSeconds < 10) { durationSeconds = "0" + durationSeconds; }
                 if (currentMinutes < 10) { currentMinutes = "0" + currentMinutes; }
                 if (durationMinutes < 10) { durationMinutes = "0" + durationMinutes; }
-            
+
                 // показывает обновленную продолжительность трека
                 curr_time.textContent = currentMinutes + ":" + currentSeconds;
                 total_duration.textContent = durationMinutes + ":" + durationSeconds;

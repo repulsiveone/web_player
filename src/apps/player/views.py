@@ -1,6 +1,7 @@
 from django.http import FileResponse
 from django.shortcuts import render
 import json
+from .models import TrackList
 
 
 """ main page with player """
@@ -15,11 +16,11 @@ import json
 
 
 def index(request):
-    data = [{'path': '/static/принц.mp3', 'image': '/static/китик.jpg'}, {'path': '/static/mana_break.mp3', 'image': '/static/китик.jpg'}]
-    # geodata = [("Here", (1003, 3004)), ("There", (1.2, 1.3))]
+    data = []
+    bd = TrackList.objects.all()
+    for i in bd:
+        data.append({'path': i.location, 'image': '/static/китик.jpg'})
 
-    # data = '/static/принц.mp3'
-    # for i in data:
     return render(request, 'app/player.html', {'data': json.dumps(data)})
 
 
