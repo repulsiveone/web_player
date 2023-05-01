@@ -28,7 +28,7 @@ let curr_track = document.createElement('audio');
 let track_list = [
 {
 	name: "Mana break",
-	artist: "zxcursed",
+	artist: "курсед",
 	image: data[track_index].image,
 	path: data[track_index].path
 },
