@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, TrackList
+from .models import CustomUser, TrackList, UserMusic
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -18,7 +18,13 @@ class CustomUserChangeForm(UserChangeForm):
 class ListWTrack(forms.ModelForm):
     class Meta:
         model = TrackList
-        fields = ('name', 'duration', 'location')
+        fields = ('id', 'name', 'duration', 'location')
+
+
+class UserTrack(forms.ModelForm):
+    class Meta:
+        model = UserMusic
+        fields = ('user', 'track')
 
 
 # class ListWTrackChange(forms.ModelForm):

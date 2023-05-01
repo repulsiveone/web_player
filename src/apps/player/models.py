@@ -8,6 +8,9 @@ class TrackList(models.Model):
     duration = models.IntegerField()
     location = models.CharField(max_length=100)
 
+    """????"""
+    objects = models.Manager()
+
 
 class CustomUser(AbstractUser):
     id = models.AutoField(primary_key=True)

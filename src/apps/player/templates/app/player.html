@@ -6,11 +6,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
 
 <!-- Стили -->
-<link rel="stylesheet" type="text/css" href="static/css/player.css">
+<link rel="stylesheet" type="text/css" href="/static/css/player.css">
 </head>
 <body>
+<form method="POST">{% csrf_token %}
 <div class="player">
-
 	<!-- разделы для отображения деталей -->
 	<div class="details">
 	<div class="now-playing">PLAYING x OF y</div>
@@ -30,6 +30,9 @@
 	<div class="next-track" onclick="nextTrack()">
 		<i class="fa fa-step-forward fa-2x"></i>
 	</div>
+	<div class="send-id" onclick="favorite()">
+		<i class="fa fa-heart fa-2x"></i>
+	</div>
 	</div>
 
 	<!-- раздел для отображения ползунка-->
@@ -48,10 +51,12 @@
 	<i class="fa fa-volume-up"></i>
 	</div>
 </div>
-
-
+</form>
 
 <!-- ну кстати я понял как работает эта тварь снизу, не така уж она и тварь ツ -->
-<script id="test" src="static/js_scripts/mplayer.js">{{data|safe}}</script>
+<script src='http://code.jquery.com/jquery-latest.min.js'></script>
+<script id="test" src="/static/js_scripts/player.js">
+{{data|safe}}
+</script>
 </body>
 </html>
