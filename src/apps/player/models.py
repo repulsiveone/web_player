@@ -21,6 +21,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(max_length=60)
     track = models.ManyToManyField(TrackList, through='UserMusic')
 
+    objects = models.Manager()
+
     def __str__(self):
         return self.username
 

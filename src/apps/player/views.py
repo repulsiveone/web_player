@@ -1,7 +1,7 @@
 from django.http import FileResponse
 from django.shortcuts import render
 import json
-from .models import TrackList, CustomUser
+from .models import TrackList, CustomUser, UserMusic
 
 
 """ main page with player """
@@ -18,14 +18,11 @@ from .models import TrackList, CustomUser
 def index(request):
     if request.method == 'POST':
         id_of_track = request.POST.get('id')
-        print(id_of_track)
-        # current_track = TrackList.objects.get(id=id_of_track)
-
-        # current_user = request.user
-        # track = TrackList.objects.get(name=current_track)
-        # user = CustomUser.objects.get(id=current_user.id)
-        # user.track.add(track)
-        # user.save()
+        current_track = TrackList.objects.get(id=id_of_track)
+        current_user = request.user
+        user = CustomUser.objects.get(id=current_user.id)
+        user.track.add(current_track)
+        user.save()
 
     data = []
     base = TrackList.objects.all()
