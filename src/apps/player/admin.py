@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import CustomUserCreationForm, CustomUserChangeForm, ListWTrack, UserTrack
+from .forms import CustomUserCreationForm, CustomUserChangeForm, TrackListForm, UserMusicForm
 from .models import CustomUser, TrackList, UserMusic
 
 
@@ -14,13 +14,13 @@ class CustomUserAdmin(UserAdmin):
 
 
 class TrackListAdmin(admin.ModelAdmin):
-    form = ListWTrack
+    form = TrackListForm
     model = TrackList
     list_display = ['id', 'name', 'duration', 'location']
 
 
 class UserMusicAdmin(admin.ModelAdmin):
-    form = UserTrack
+    form = UserMusicForm
     model = UserMusic
     list_display = ['user', 'track']
 
