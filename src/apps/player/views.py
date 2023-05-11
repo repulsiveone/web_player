@@ -1,9 +1,10 @@
 from django.http import FileResponse
 from django.shortcuts import render, redirect
-from django.contrib import auth
+from django.contrib.auth import login
 import json
 from .models import TrackList, CustomUser, UserMusic
-from .forms import SignUpForm, LoginForm
+from .forms import SignUpForm, AuthenticationForm, LoginForm
+from django.contrib.auth.hashers import check_password
 
 
 """ main page with player """
@@ -29,18 +30,13 @@ def signup(request):
     return render(request, 'app/signup.html', {'form': form})
 
 
-def login(request):
+def log_in(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(data=request.POST)
         if form.is_valid():
-            """hash for password"""
-            user = CustomUser.objects.get(email=form.cleaned_data.get('email'), password=form.cleaned_data.get('password'))
-            if user is not None:
-                auth.login(request, user)
-                return redirect('/homepage')
-            else:
-                """alert"""
-                pass
+            user = form.get_user()
+            login(request, user)
+            return redirect('/homepage')
     else:
         form = LoginForm()
 
@@ -48,6 +44,7 @@ def login(request):
 
 
 def index(request):
+    print(request.user.email)
     if request.method == 'POST':
         id_of_track = request.POST.get('id')
         current_track = TrackList.objects.get(id=id_of_track)
