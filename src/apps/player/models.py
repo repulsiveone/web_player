@@ -11,6 +11,9 @@ class TrackList(models.Model):
     """????"""
     objects = models.Manager()
 
+    def __str__(self):
+        return self.name
+
 
 class CustomUser(AbstractUser):
     id = models.AutoField(primary_key=True)
@@ -31,3 +34,19 @@ class UserMusic(models.Model):
     id = models.AutoField(primary_key=True)
     track = models.ForeignKey(TrackList, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    objects = models.Manager()
+
+
+class Playlist(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    tracks = models.ManyToManyField(TrackList)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.name
+
+

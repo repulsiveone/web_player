@@ -2,7 +2,7 @@ from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 import json
-from .models import TrackList, CustomUser, UserMusic
+from .models import TrackList, CustomUser, UserMusic, Playlist
 from .forms import SignUpForm, AuthenticationForm, LoginForm
 from django.contrib.auth.hashers import check_password
 
@@ -65,19 +65,28 @@ def index(request):
     return render(request, 'app/player.html', {'data': json.dumps(data)})
 
 
-def new_releases(request):
-    pass
+def tracks(request):
+    current_user = request.user
 
+    user = CustomUser.objects.get(id=current_user.id)
+    all_tracks = user.track.all()
+    # track_names = [track.name for track in tracks]
+    # print(track_names)
+    #todo make this func with js
+    """function for add track in playlist from js"""
+    if request.method == 'POST':
+        data = """track_id"""
+        playlist = Playlist.objects.get(id=1)
+        playlist.tracks.add(data)
 
-def chart(request):
-    pass
+    return render(request, 'app/user_music.html', {'tracks': all_tracks})
 
 
 def playlists(request):
     pass
 
 
-def tracks(request):
+def top_playlists(request):
     pass
 
 

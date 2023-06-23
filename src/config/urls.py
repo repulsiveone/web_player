@@ -24,4 +24,5 @@ urlpatterns = [
     path('signup/', include('apps.player.urls')),
     path('login/', include('apps.player.urls')),
     path('logout/', include('apps.player.urls')),
+    path('tracks/', include('apps.player.urls')),
 ]

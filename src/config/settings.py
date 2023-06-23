@@ -131,3 +131,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'player.CustomUser'
 
 AUTHENTICATION_BACKENDS = ('apps.player.backends.EmailBackend', )
+
+LOGOUT_REDIRECT_URL = '/login/'
