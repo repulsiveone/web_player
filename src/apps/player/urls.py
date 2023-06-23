@@ -10,7 +10,7 @@ urlpatterns = [
     path('login/', views.log_in, name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     # """music urls for user"""
-    path('playlists', views.playlists, name='playlists'),
+    path('playlists/', views.playlists, name='playlists'),
     path('tracks/', views.tracks, name='tracks'),
     path('history', views.history, name='history'),
 

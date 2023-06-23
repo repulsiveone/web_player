@@ -74,6 +74,8 @@ def tracks(request):
     # print(track_names)
     #todo make this func with js
     """function for add track in playlist from js"""
+    playlist = Playlist.objects.get(id=1)
+    playlist.tracks.add(1)
     if request.method == 'POST':
         data = """track_id"""
         playlist = Playlist.objects.get(id=1)
@@ -83,7 +85,9 @@ def tracks(request):
 
 
 def playlists(request):
-    pass
+    playlist = Playlist.objects.get(id=1)
+    playlist_tracks = playlist.tracks.all()
+    return render(request, 'app/user_playlists.html', {'playlist': playlist, 'playlist_tracks': playlist_tracks})
 
 
 def top_playlists(request):
