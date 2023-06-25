@@ -14,7 +14,7 @@ urlpatterns = [
     path('tracks/', views.tracks, name='tracks'),
     path('history', views.history, name='history'),
 
-    path('chats', views.chats, name='chats'),
+    path('chats/<int:room_id>/', views.chats, name='chats'),
 
     path('userpage', views.userpage, name='userpage'),
     # path('settings/account'),

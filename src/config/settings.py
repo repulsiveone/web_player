@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.player.apps.PlayerConfig',
+    'channels',
+    'redis',
+    'django_redis',
+    'channels_redis',
 ]
 
 # AUTH_USER_MODEL = 'apps.users'
@@ -71,6 +75,8 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'apps.chat.routing.application'
+
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
@@ -84,6 +90,15 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'kAWABANGA',
     }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
 }
 
 

@@ -26,4 +26,5 @@ urlpatterns = [
     path('logout/', include('apps.player.urls')),
     path('tracks/', include('apps.player.urls')),
     path('playlists/', include('apps.player.urls')),
+    path('chats/<int:room_id>/', include('apps.player.urls')),
 ]

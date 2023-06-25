@@ -1,10 +1,15 @@
-from django.http import FileResponse
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 import json
+
+
 from .models import TrackList, CustomUser, UserMusic, Playlist
 from .forms import SignUpForm, AuthenticationForm, LoginForm
 from django.contrib.auth.hashers import check_password
+from ..consumers import websocket_receive
 
 
 """ main page with player """
@@ -98,8 +103,10 @@ def history(request):
     pass
 
 
-def chats(request):
-    pass
+def chats(request, room_id):
+    return render(request, 'app/chats.html', {
+        'room_id': room_id
+    })
 
 
 def userpage(request):
