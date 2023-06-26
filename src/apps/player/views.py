@@ -9,7 +9,6 @@ import json
 from .models import TrackList, CustomUser, UserMusic, Playlist
 from .forms import SignUpForm, AuthenticationForm, LoginForm
 from django.contrib.auth.hashers import check_password
-from ..consumers import websocket_receive
 
 
 """ main page with player """
@@ -103,9 +102,13 @@ def history(request):
     pass
 
 
-def chats(request, room_id):
-    return render(request, 'app/chats.html', {
-        'room_id': room_id
+def chats(request):
+    return render(request, 'app/chats.html')
+
+
+def room(request, room_name):
+    return render(request, 'app/room.html', {
+        'room_name': room_name
     })
 
 

@@ -12,8 +12,7 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-
-import web_player.src.apps.chat.routing as rout
+import web_player.src.apps.player.routing as rout
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
@@ -25,6 +24,3 @@ application = ProtocolTypeRouter({
         )
     ),
 })
-
-
-# application = get_asgi_application()

@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'apps.chat.routing.application'
+ASGI_APPLICATION = 'apps.config.settings.application'
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -92,14 +92,14 @@ DATABASES = {
     }
 }
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
-        },
-    },
-}
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [('127.0.0.1', 6379)],
+#         },
+#     },
+# }
 
 
 # Password validation
