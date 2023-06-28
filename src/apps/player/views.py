@@ -98,8 +98,12 @@ def history(request):
     pass
 
 
-def chats(request):
-    pass
+def chat(request):
+    return render(request, 'app/chats.html')
+
+
+def room(request, room_name):
+    return render(request, 'app/room.html', {"room_name": room_name})
 
 
 def userpage(request):
