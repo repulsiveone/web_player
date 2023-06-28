@@ -103,7 +103,9 @@ def chat(request):
 
 
 def room(request, room_name):
-    return render(request, 'app/room.html', {"room_name": room_name})
+    username = request.user
+    print(username)
+    return render(request, 'app/room.html', {"room_name": room_name, "username": username})
 
 
 def userpage(request):
