@@ -2,6 +2,9 @@ from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 import json
+
+from django.utils.safestring import mark_safe
+
 from .models import TrackList, CustomUser, UserMusic, Playlist
 from .forms import SignUpForm, AuthenticationForm, LoginForm
 from django.contrib.auth.hashers import check_password
@@ -103,9 +106,7 @@ def chat(request):
 
 
 def room(request, room_name):
-    username = request.user
-    print(username)
-    return render(request, 'app/room.html', {"room_name": room_name, "username": username})
+    return render(request, 'app/room.html', {"room_name": room_name})
 
 
 def userpage(request):

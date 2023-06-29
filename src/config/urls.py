@@ -28,4 +28,5 @@ urlpatterns = [
     path('playlists/', include('apps.player.urls')),
     path('chat/', include('apps.player.urls')),
     path('chat/<str:room_name>/', include('apps.player.urls')),
+    # path('chat/<str:room_name>/<str:username>', include('apps.player.urls')),
 ]
