@@ -1,10 +1,11 @@
 from django.http import FileResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 import json
 from .models import TrackList, CustomUser, UserMusic, Playlist
 from .forms import SignUpForm, AuthenticationForm, LoginForm
 from django.contrib.auth.hashers import check_password
+from django.http import JsonResponse
 
 
 """ main page with player """
@@ -21,10 +22,17 @@ from django.contrib.auth.hashers import check_password
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
-        """best way make func in form"""
         if form.is_valid():
-            form.save()
+            """работает но не логинит"""
+            user = form.save()
+            playlist = Playlist.objects.create(name='favorite', user=user)
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(email=email, password=password)
+            login(request, user)
+
             return redirect('/login')
+
     else:
         form = SignUpForm()
     return render(request, 'app/signup.html', {'form': form})
@@ -42,27 +50,59 @@ def log_in(request):
 
     return render(request, 'app/login.html', {'form': form})
 
-
+"""нужно сделать чтобы при авторизации пользователя, ему создавался плейлист favorite и выбор этого плейлиста, для главной страницы"""
 def index(request):
-    print(request.user.email)
     if request.method == 'POST':
-        id_of_track = request.POST.get('id')
-        current_track = TrackList.objects.get(id=id_of_track)
         current_user = request.user
-        user = CustomUser.objects.get(id=current_user.id)
-        if user.track.filter(id=id_of_track).exists():
-            """alert on page that track has already added in bd / or change button"""
-            pass
-        else:
-            user.track.add(current_track)
-            user.save()
+        """получить пользователя, запрос к плейлистам по id пользователю и по названию favorite, это будет current playlist"""
+        """работает"""
+        current_playlist = Playlist.objects.get(user=current_user)
 
-    data = []
-    base = TrackList.objects.all()
-    for item in base:
-        data.append({'id': item.id, 'path': item.location, 'image': '/static/китик.jpg', 'name': item.name})
+        # current_playlist_id = request.POST.get('playlist_id')
+        # current_playlist = Playlist.objects.get(id=current_playlist_id)
+        # data = {'current_playlist': current_playlist}
+        #
+        # return JsonResponse(data)
+        return render(request, 'app/homepage.html', {'current_playlist': current_playlist})
+    return render(request, 'app/homepage.html')
 
-    return render(request, 'app/player.html', {'data': json.dumps(data)})
+
+def select_playlist(request):
+    pass
+
+
+def update_playlist(request):
+    pass
+
+
+def delete_track(request):
+    pass
+
+
+def add_track(request):
+    pass
+
+
+# def index(request):
+#     print(request.user.email)
+#     if request.method == 'POST':
+#         id_of_track = request.POST.get('id')
+#         current_track = TrackList.objects.get(id=id_of_track)
+#         current_user = request.user
+#         user = CustomUser.objects.get(id=current_user.id)
+#         if user.track.filter(id=id_of_track).exists():
+#             """alert on page that track has already added in bd / or change button"""
+#             pass
+#         else:
+#             user.track.add(current_track)
+#             user.save()
+#
+#     data = []
+#     base = TrackList.objects.all()
+#     for item in base:
+#         data.append({'id': item.id, 'path': item.location, 'image': '/static/китик.jpg', 'name': item.name})
+#
+#     return render(request, 'app/player.html', {'data': json.dumps(data)})
 
 
 def tracks(request):

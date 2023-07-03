@@ -41,7 +41,8 @@ class UserMusic(models.Model):
 class Playlist(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey('player.CustomUser', on_delete=models.CASCADE)
     tracks = models.ManyToManyField(TrackList)
 
     objects = models.Manager()
