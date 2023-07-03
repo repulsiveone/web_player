@@ -50,37 +50,60 @@ def log_in(request):
 
     return render(request, 'app/login.html', {'form': form})
 
+"""главная страница где по умолчанию плейлист favorite для пользователя"""
+
 """нужно сделать чтобы при авторизации пользователя, ему создавался плейлист favorite и выбор этого плейлиста, для главной страницы"""
 def index(request):
-    if request.method == 'POST':
-        current_user = request.user
-        """получить пользователя, запрос к плейлистам по id пользователю и по названию favorite, это будет current playlist"""
-        """работает"""
-        current_playlist = Playlist.objects.get(user=current_user)
+    current_user = request.user
+    """получить пользователя, запрос к плейлистам по id пользователю и по названию favorite, это будет current playlist"""
+    """работает"""
+    current_playlist = Playlist.objects.get(user=current_user, name='favorite')
 
-        # current_playlist_id = request.POST.get('playlist_id')
-        # current_playlist = Playlist.objects.get(id=current_playlist_id)
-        # data = {'current_playlist': current_playlist}
-        #
-        # return JsonResponse(data)
-        return render(request, 'app/homepage.html', {'current_playlist': current_playlist})
-    return render(request, 'app/homepage.html')
+    return render(request, 'app/homepage.html', {'current_playlist': current_playlist})
 
 
+
+"""выбор плейлиста по нажатию по id"""
 def select_playlist(request):
-    pass
+    """get потому что с ajax передаю??"""
+    if request.method == "POST":
+        current_playlist_id = request.POST.get('playlist_id')
+        current_playlist = Playlist.objects.get(id=current_playlist_id)
+
+        data = {'current_playlist': current_playlist}
+
+        return JsonResponse(data)
 
 
-def update_playlist(request):
-    pass
+"""возможно стоит передавать сразу плейлист"""
+def update_playlist(playlist_id):
+    current_playlist = Playlist.objects.get(id=playlist_id)
 
+    data = {'current_playlist': current_playlist}
 
-def delete_track(request):
-    pass
+    return JsonResponse(data)
 
 
 def add_track(request):
-    pass
+    if request.method == "POST":
+        track_id = request.POST.get('track_id')
+        track = TrackList.objects.get(id=track_id)
+        playlist_id = request.POST.get('playlist_id')
+        playlist = Playlist.objects.get(id=playlist_id)
+        playlist.tracks.add(track)
+        playlist.save()
+        update_playlist(playlist_id)
+
+
+def delete_track(request):
+    if request.method == "POST":
+        track_id = request.POST.get('track_id')
+        track = TrackList.objects.get(id=track_id)
+        playlist_id = request.POST.get('playlist_id')
+        playlist = Playlist.objects.get(id=playlist_id)
+        playlist.tracks.remove(track)
+        playlist.save()
+        update_playlist(playlist_id)
 
 
 # def index(request):
