@@ -54,13 +54,28 @@ def log_in(request):
 
 """нужно сделать чтобы при авторизации пользователя, ему создавался плейлист favorite и выбор этого плейлиста, для главной страницы"""
 def index(request):
-    current_user = request.user
-    """получить пользователя, запрос к плейлистам по id пользователю и по названию favorite, это будет current playlist"""
-    """работает"""
-    current_playlist = Playlist.objects.get(user=current_user, name='favorite')
+    if request.method == 'POST':
+        current_user = request.user
+        """получить пользователя, запрос к плейлистам по id пользователю и по названию favorite, это будет current playlist"""
+        """работает"""
+        current_playlist = Playlist.objects.get(user=current_user, name='favorite')
 
-    return render(request, 'app/homepage.html', {'current_playlist': current_playlist})
+        current_playlist_data = {
+            'name': current_playlist.name,
+            'tracks': [],
+        }
 
+        for track in current_playlist.tracks.all():
+            track_data = {
+                'title': track.name,
+                'audio_path': track.location,
+            }
+
+            current_playlist_data['tracks'].append(track_data)
+
+        return JsonResponse(current_playlist_data, content_type='application/json')
+
+    return render(request, 'app/homepage.html')
 
 
 """выбор плейлиста по нажатию по id"""
@@ -70,18 +85,37 @@ def select_playlist(request):
         current_playlist_id = request.POST.get('playlist_id')
         current_playlist = Playlist.objects.get(id=current_playlist_id)
 
-        data = {'current_playlist': current_playlist}
+        current_playlist_data = {
+            'name': current_playlist.name,
+            'tracks': [],
+        }
 
-        return JsonResponse(data)
+        for track in current_playlist.tracks.all():
+            track_data = {
+                'title': track.name,
+                'audio_path': track.location,
+            }
+
+            current_playlist_data['tracks'].append(track_data)
+
+        return JsonResponse(current_playlist_data)
 
 
-"""возможно стоит передавать сразу плейлист"""
-def update_playlist(playlist_id):
-    current_playlist = Playlist.objects.get(id=playlist_id)
+def update_playlist(playlist):
+    current_playlist_data = {
+        'name': playlist.name,
+        'tracks': [],
+    }
 
-    data = {'current_playlist': current_playlist}
+    for track in playlist.tracks.all():
+        track_data = {
+            'title': track.name,
+            'audio_path': track.location,
+        }
 
-    return JsonResponse(data)
+        current_playlist_data['tracks'].append(track_data)
+
+    return JsonResponse(current_playlist_data)
 
 
 def add_track(request):
@@ -92,7 +126,7 @@ def add_track(request):
         playlist = Playlist.objects.get(id=playlist_id)
         playlist.tracks.add(track)
         playlist.save()
-        update_playlist(playlist_id)
+        update_playlist(playlist)
 
 
 def delete_track(request):
@@ -103,54 +137,62 @@ def delete_track(request):
         playlist = Playlist.objects.get(id=playlist_id)
         playlist.tracks.remove(track)
         playlist.save()
-        update_playlist(playlist_id)
-
-
-# def index(request):
-#     print(request.user.email)
-#     if request.method == 'POST':
-#         id_of_track = request.POST.get('id')
-#         current_track = TrackList.objects.get(id=id_of_track)
-#         current_user = request.user
-#         user = CustomUser.objects.get(id=current_user.id)
-#         if user.track.filter(id=id_of_track).exists():
-#             """alert on page that track has already added in bd / or change button"""
-#             pass
-#         else:
-#             user.track.add(current_track)
-#             user.save()
-#
-#     data = []
-#     base = TrackList.objects.all()
-#     for item in base:
-#         data.append({'id': item.id, 'path': item.location, 'image': '/static/китик.jpg', 'name': item.name})
-#
-#     return render(request, 'app/player.html', {'data': json.dumps(data)})
+        update_playlist(playlist)
 
 
 def tracks(request):
+    if request.method == "POST":
+        pass
+    #todo надо переделать базу данных / добавить плейлист/user и убрать usermusic
     current_user = request.user
+    current_playlist = Playlist.objects.get(user=current_user, name='favorite')
 
-    user = CustomUser.objects.get(id=current_user.id)
-    all_tracks = user.track.all()
-    # track_names = [track.name for track in tracks]
-    # print(track_names)
-    #todo make this func with js
-    """function for add track in playlist from js"""
-    playlist = Playlist.objects.get(id=1)
-    playlist.tracks.add(1)
-    if request.method == 'POST':
-        data = """track_id"""
-        playlist = Playlist.objects.get(id=1)
-        playlist.tracks.add(data)
+    current_playlist_data = {
+        'name': current_playlist.name,
+        'tracks': [],
+    }
 
-    return render(request, 'app/user_music.html', {'tracks': all_tracks})
+    for track in current_playlist.tracks.all():
+        track_data = {
+            'title': track.name,
+            'audio_path': track.location,
+        }
+
+        current_playlist_data['tracks'].append(track_data)
+    # 'WSGIRequest' object has no attribute 'is_ajax'
+    # if request.is_ajax():
+    #     return JsonResponse(current_playlist_data, content_type='application/json')
+
+    return render(request, 'app/user_music.html', {'fav_playlist': current_playlist_data})
 
 
 def playlists(request):
-    playlist = Playlist.objects.get(id=1)
-    playlist_tracks = playlist.tracks.all()
-    return render(request, 'app/user_playlists.html', {'playlist': playlist, 'playlist_tracks': playlist_tracks})
+    if request.method == "POST":
+        pass
+    current_user = request.user
+
+    list_playlists = []
+
+    us_playlists = Playlist.objects.filter(user=current_user)
+
+    for playlist in us_playlists:
+        user_playlists = {
+            'name': playlist.name,
+            'tracks': [],
+        }
+
+        for track in playlist.tracks.all():
+            track_data = {
+                'title': track.name,
+                'audio_path': track.location,
+            }
+
+            user_playlists['tracks'].append(track_data)
+        list_playlists.append(user_playlists)
+    # 'WSGIRequest' object has no attribute 'is_ajax'
+    # if request.is_ajax():
+    #     return JsonResponse(list_playlists, content_type='application/json')
+    return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
 
 
 def top_playlists(request):

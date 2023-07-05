@@ -51,3 +51,7 @@ class Playlist(models.Model):
         return self.name
 
 
+# class UserPlaylists(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
