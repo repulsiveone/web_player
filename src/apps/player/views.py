@@ -1,9 +1,10 @@
+from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 import json
 from .models import TrackList, CustomUser, UserMusic, Playlist
-from .forms import SignUpForm, AuthenticationForm, LoginForm
+from .forms import SignUpForm, AuthenticationForm, LoginForm, TrackListForm
 from django.contrib.auth.hashers import check_password
 from django.http import JsonResponse
 
@@ -51,15 +52,11 @@ def log_in(request):
     return render(request, 'app/login.html', {'form': form})
 
 """главная страница где по умолчанию плейлист favorite для пользователя"""
-
-"""нужно сделать чтобы при авторизации пользователя, ему создавался плейлист favorite и выбор этого плейлиста, для главной страницы"""
 def index(request):
     if request.method == 'POST':
         current_user = request.user
-        """получить пользователя, запрос к плейлистам по id пользователю и по названию favorite, это будет current playlist"""
-        """работает"""
         current_playlist = Playlist.objects.get(user=current_user, name='favorite')
-
+        """на этой странице не нужно название плейлиста и тд, нужна вся информация про треки"""
         current_playlist_data = {
             'name': current_playlist.name,
             'tracks': [],
@@ -143,7 +140,6 @@ def delete_track(request):
 def tracks(request):
     if request.method == "POST":
         pass
-    #todo надо переделать базу данных / добавить плейлист/user и убрать usermusic
     current_user = request.user
     current_playlist = Playlist.objects.get(user=current_user, name='favorite')
 
@@ -165,7 +161,7 @@ def tracks(request):
 
     return render(request, 'app/user_music.html', {'fav_playlist': current_playlist_data})
 
-
+"""если play то с ajax как то и чтобы id отправлялся а если список треков то просто выводится но наверное получается также по нажатию"""
 def playlists(request):
     if request.method == "POST":
         pass
@@ -173,15 +169,15 @@ def playlists(request):
 
     list_playlists = []
 
-    us_playlists = Playlist.objects.filter(user=current_user)
+    us_playlists = UserMusic.objects.filter(user=current_user)
 
     for playlist in us_playlists:
         user_playlists = {
-            'name': playlist.name,
+            'name': playlist.playlist.name,
             'tracks': [],
         }
 
-        for track in playlist.tracks.all():
+        for track in playlist.playlist.tracks.all():
             track_data = {
                 'title': track.name,
                 'audio_path': track.location,
@@ -190,6 +186,7 @@ def playlists(request):
             user_playlists['tracks'].append(track_data)
         list_playlists.append(user_playlists)
     # 'WSGIRequest' object has no attribute 'is_ajax'
+    """добавить просто в if POST и отправлять в ajax"""
     # if request.is_ajax():
     #     return JsonResponse(list_playlists, content_type='application/json')
     return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
@@ -197,6 +194,28 @@ def playlists(request):
 
 def top_playlists(request):
     pass
+
+
+def load_track(request):
+    if request.method == "POST":
+        form = TrackListForm(request.POST, request.FILES)
+        if form.is_valid():
+            track_file = request.FILES['track_file']
+            track_image = request.FILES['track_image']
+            """сделать чтобы файлы не сохранялись дважды (redirect)"""
+            """добавление пути в базу и автоматическое добавление в плейлист fav для current user"""
+            """вроде сохраняется в папку"""
+            fs = FileSystemStorage()
+            filename = fs.save(track_file.name, track_file)
+            uploaded_file_url = fs.url(filename)
+            print(uploaded_file_url)
+
+            print('valid')
+        else:
+            print('not valid')
+    else:
+        form = TrackListForm()
+    return render(request, 'app/load_track.html', {'form': form})
 
 
 def history(request):

@@ -16,21 +16,22 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ['email', 'username']
 
-    filter_horizontal = ('track',)
+    # filter_horizontal = ('any_playlist',)
 
     inlines = [UserMusicInline]
 
 
 class TrackListAdmin(admin.ModelAdmin):
-    form = TrackListForm
-    model = TrackList
-    list_display = ['id', 'name', 'duration', 'location']
+    pass
+#     form = TrackListForm
+#     model = TrackList
+#     list_display = ['id', 'name', 'location']
 
 
 class UserMusicAdmin(admin.ModelAdmin):
     form = UserMusicForm
     model = UserMusic
-    list_display = ['user', 'track']
+    list_display = ['user', 'playlist']
 
 
 class PlaylistAdmin(admin.ModelAdmin):

@@ -17,6 +17,7 @@ urlpatterns = [
     path('chats', views.chats, name='chats'),
 
     path('userpage', views.userpage, name='userpage'),
+    path('load/', views.load_track, name='load_track'),
     # path('settings/account'),
     # path('settings/other')
 ]
