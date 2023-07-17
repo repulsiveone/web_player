@@ -4,19 +4,19 @@ let track_art = document.querySelector(".track-art");
 let track_name = document.querySelector(".track-name");
 let track_artist = document.querySelector(".track-artist");
 
-let test_data = JSON.parse(document.getElementById('test').textContent);
-
 let playpause_btn = document.querySelector(".playpause-track");
 let next_btn = document.querySelector(".next-track");
 let prev_btn = document.querySelector(".prev-track");
 let send_btn = document.querySelector(".send-id")
+
+let data_btn = document.querySelector(".data-id")
 
 let seek_slider = document.querySelector(".seek_slider");
 let volume_slider = document.querySelector(".volume_slider");
 let curr_time = document.querySelector(".current-time");
 let total_duration = document.querySelector(".total-duration");
 
-// используемые знаения
+// используемые значения
 let track_index = 0;
 let isPlaying = false;
 let updateTimer;
@@ -24,14 +24,34 @@ let updateTimer;
 // аудио элемент для плеера
 let curr_track = document.createElement('audio');
 
-// трек лист
-let track_list =
-{
-    id: test_data[track_index].id,
-	name: test_data[track_index].name,
-	artist: "zxcursed",
-	image: test_data[track_index].image,
-	path: test_data[track_index].path
+let track_list = []
+window.onload = load()
+// по открытию страницы выполняется функция загрузки данных из бд
+function load() {
+    $.ajax({
+        url: "homepage/",
+        type: "POST",
+        dataType: 'json',
+        data: {
+        'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
+        },
+
+        success: function(data) {
+            data.tracks.forEach(function(tracks) {
+                track_list.push({
+                'id': '1',
+                'name': tracks.title,
+                'path': tracks.audio_path,
+                'artist': "zxcursed",
+                'image': "/static/китик.jpg"
+                })
+            })
+        },
+
+        complete: function() {
+                loadTrack(track_index);
+                }
+    });
 }
 
 function loadTrack(track_index) {
@@ -40,16 +60,16 @@ clearInterval(updateTimer);
 resetValues();
 }
 // лоадит новый трек
-curr_track.src = test_data[track_index].path;
+curr_track.src = track_list[track_index].path;
 curr_track.load();
 
 // апдейтит дательки трека
 track_art.style.backgroundImage =
-	"url(" + test_data[track_index].image + ")";
-track_name.textContent = test_data[track_index].name;
-track_artist.textContent = test_data[track_index].artist;
+	"url(" + track_list[track_index].image + ")";
+track_name.textContent = track_list[track_index].name;
+track_artist.textContent = track_list[track_index].artist;
 now_playing.textContent =
-	"PLAYING " + (track_index + 1) + " OF " + test_data.length;
+	"PLAYING " + (track_index + 1) + " OF " + track_list.length;
 
 // интервал в 1000 миллисекунд для обновления ползунка
 updateTimer = setInterval(seekUpdate, 1000);
@@ -69,17 +89,17 @@ function loadTrack(track_index) {
     clearInterval(updateTimer);
     resetValues();
 
-    // лоадит новый трек х2
-    curr_track.src = test_data[track_index].path;
+//     лоадит новый трек х2
+    curr_track.src = track_list[track_index].path;
     curr_track.load();
 
-    // Обновляет инфу о треке
+//     Обновляет инфу о треке
     track_art.style.backgroundImage =
-        "url(" + test_data[track_index].image + ")";
-    track_name.textContent = test_data[track_index].name;
-    track_artist.textContent = test_data[track_index].artist;
+        "url(" + track_list[track_index].image + ")";
+    track_name.textContent = track_list[track_index].name;
+    track_artist.textContent = track_list[track_index].artist;
     now_playing.textContent =
-        "PLAYING " + (track_index + 1) + " OF " + test_data.length;
+        "PLAYING " + (track_index + 1) + " OF " + track_list.length;
 
     //интервал в 1000 миллисекунд для обновления бегунка поиска
     updateTimer = setInterval(seekUpdate, 1000);
@@ -120,29 +140,29 @@ function loadTrack(track_index) {
         }
 
         function nextTrack() {
-       // вернуться к первому треку если это последний трек
-        if (track_index < test_data.length - 1)
+//        вернуться к первому треку если это последний трек
+        if (track_index < track_list.length - 1)
             track_index += 1;
         else track_index = 0;
 
-        // загрузить и запустить новый трек
+//         загрузить и запустить новый трек
         loadTrack(track_index);
         playTrack();
         }
 
         function prevTrack() {
-        // Вернуться к последней дорожке если текущий стоит первым в списке треков
+//         Вернуться к последней дорожке если текущий стоит первым в списке треков
         if (track_index > 0)
             track_index -= 1;
-        else track_index = test_data.length - 1;
+        else track_index = track_list.length - 1;
 
-        // загрузить и запустить новый трек
+//         загрузить и запустить новый трек
         loadTrack(track_index);
         playTrack();
         }
-
+// добавить трек в любимые || вроде нет функции на стороне backend
         function favorite() {
-        var id_data = test_data[track_index].id;
+        var id_data = track_list[track_index].id;
         $.ajax({
             url: "homepage/",
             type: "POST",
