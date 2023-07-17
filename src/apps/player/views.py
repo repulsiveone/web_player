@@ -140,6 +140,7 @@ def delete_track(request):
 def tracks(request):
     current_user = request.user
     if request.method == "POST":
+        current_user = request.user
         current_playlist = Playlist.objects.get(user=current_user, name='favorite')
 
         current_playlist_data = {
@@ -155,11 +156,11 @@ def tracks(request):
 
             current_playlist_data['tracks'].append(track_data)
 
-            return JsonResponse(current_playlist_data, content_type='application/json')
+        return JsonResponse(current_playlist_data, content_type='application/json')
 
-    data = Playlist.objects.get(user=current_user, name='favorite')
+    playlist = Playlist.objects.get(user=current_user, name='favorite')
 
-    return render(request, 'app/user_music.html', {'data': data})
+    return render(request, 'app/user_music.html', {'playlist': playlist})
 
 """если play то с ajax как то и чтобы id отправлялся а если список треков то просто выводится но наверное получается также по нажатию"""
 def playlists(request):
