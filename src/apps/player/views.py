@@ -6,7 +6,7 @@ import json
 from .models import TrackList, CustomUser, UserMusic, Playlist
 from .forms import SignUpForm, AuthenticationForm, LoginForm, TrackListForm
 from django.contrib.auth.hashers import check_password
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 
 """ main page with player """
@@ -138,28 +138,28 @@ def delete_track(request):
 
 
 def tracks(request):
-    if request.method == "POST":
-        pass
     current_user = request.user
-    current_playlist = Playlist.objects.get(user=current_user, name='favorite')
+    if request.method == "POST":
+        current_playlist = Playlist.objects.get(user=current_user, name='favorite')
 
-    current_playlist_data = {
-        'name': current_playlist.name,
-        'tracks': [],
-    }
-
-    for track in current_playlist.tracks.all():
-        track_data = {
-            'title': track.name,
-            'audio_path': track.location,
+        current_playlist_data = {
+            'name': current_playlist.name,
+            'tracks': [],
         }
 
-        current_playlist_data['tracks'].append(track_data)
-    # 'WSGIRequest' object has no attribute 'is_ajax'
-    # if request.is_ajax():
-    #     return JsonResponse(current_playlist_data, content_type='application/json')
+        for track in current_playlist.tracks.all():
+            track_data = {
+                'title': track.name,
+                'audio_path': track.location,
+            }
 
-    return render(request, 'app/user_music.html', {'fav_playlist': current_playlist_data})
+            current_playlist_data['tracks'].append(track_data)
+
+            return JsonResponse(current_playlist_data, content_type='application/json')
+
+    data = Playlist.objects.get(user=current_user, name='favorite')
+
+    return render(request, 'app/user_music.html', {'data': data})
 
 """если play то с ajax как то и чтобы id отправлялся а если список треков то просто выводится но наверное получается также по нажатию"""
 def playlists(request):
@@ -197,22 +197,30 @@ def top_playlists(request):
 
 
 def load_track(request):
+    current_user = request.user
     if request.method == "POST":
         form = TrackListForm(request.POST, request.FILES)
+        #todo """media root настроить чтобы файлы сохранялись в разные места"""
         if form.is_valid():
+            data = form.cleaned_data
             track_file = request.FILES['track_file']
             track_image = request.FILES['track_image']
-            """сделать чтобы файлы не сохранялись дважды (redirect)"""
             """добавление пути в базу и автоматическое добавление в плейлист fav для current user"""
-            """вроде сохраняется в папку"""
             fs = FileSystemStorage()
-            filename = fs.save(track_file.name, track_file)
-            uploaded_file_url = fs.url(filename)
-            print(uploaded_file_url)
+            filename_track_file = fs.save(track_file.name, track_file)
+            filename_track_image = fs.save(track_image.name, track_image)
 
-            print('valid')
+            track_list = TrackList(name=data['track_title'], location=f"/static/{filename_track_file}",
+                                   author=data['track_author'], image=f"/static/{filename_track_image}")
+            track_list.save()
+
+            user_favorite_playlist = Playlist.objects.get(user=current_user, name='favorite')
+            user_favorite_playlist.tracks.add(track_list)
+            user_favorite_playlist.save()
+
+            return redirect('/load')
         else:
-            print('not valid')
+            pass
     else:
         form = TrackListForm()
     return render(request, 'app/load_track.html', {'form': form})
