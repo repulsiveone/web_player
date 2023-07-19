@@ -164,32 +164,32 @@ def tracks(request):
 
 """если play то с ajax как то и чтобы id отправлялся а если список треков то просто выводится но наверное получается также по нажатию"""
 def playlists(request):
-    if request.method == "POST":
-        pass
     current_user = request.user
 
-    list_playlists = []
+    if request.method == "POST":
+        if "django_play_button" in request.POST:
+            playlist_id = request.POST.get('play-button')
+            current_playlist = UserMusic.objects.get(user=current_user, id=playlist_id)
 
-    us_playlists = UserMusic.objects.filter(user=current_user)
-
-    for playlist in us_playlists:
-        user_playlists = {
-            'name': playlist.playlist.name,
-            'tracks': [],
-        }
-
-        for track in playlist.playlist.tracks.all():
-            track_data = {
-                'title': track.name,
-                'audio_path': track.location,
+            current_playlist_data = {
+                'name': current_playlist.playlist.name,
+                'tracks': [],
             }
 
-            user_playlists['tracks'].append(track_data)
-        list_playlists.append(user_playlists)
-    # 'WSGIRequest' object has no attribute 'is_ajax'
-    """добавить просто в if POST и отправлять в ajax"""
-    # if request.is_ajax():
-    #     return JsonResponse(list_playlists, content_type='application/json')
+            for track in current_playlist.playlist.tracks.all():
+                track_data = {
+                    'title': track.name,
+                    'audio_path': track.location,
+                    'image': track.image,
+                }
+
+                current_playlist_data['tracks'].append(track_data)
+            print(current_playlist_data)
+
+            return JsonResponse(current_playlist_data, content_type='application/json')
+
+    list_playlists = UserMusic.objects.filter(user=current_user)
+
     return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
 
 
