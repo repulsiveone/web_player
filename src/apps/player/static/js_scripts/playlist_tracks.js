@@ -1,4 +1,5 @@
-const playButtons = document.getElementsByClassName("django_play_button");
+// тут выбраны все элементы на хтмл странице и присвоены переменным
+const playButtons = document.getElementsByClassName('play-button');
 
 let track_art = document.querySelector(".track-art");
 let track_name = document.querySelector(".player-track-name");
@@ -25,68 +26,57 @@ let updateTimer;
 let curr_track = document.createElement('audio');
 
 let track_list = []
+// кнопки на самих треках
+function playcurrTrack(location) {
+    const trackIndex = getTrackIndexByPath(location);
+    loadTrack(trackIndex);
+    playTrack();
+}
+
+function playButtonClick(event) {
+    event.preventDefault();
+    const location = event.target.dataset.location;
+    playcurrTrack(location);
+}
+
+for (let i = 0; i < playButtons.length; i++) {
+    playButtons[i].addEventListener('click', playButtonClick);
+}
+// ищет индекс
+function getTrackIndexByPath(path) {
+  const index = track_list.findIndex(item => item.path === path);
+  return index;
+}
 
 window.onload = load()
+// по открытию страницы выполняется функция загрузки данных из бд
 function load() {
-    var favoriteId = $("#fav-id").val();
+    var id = document.getElementById('example').getAttribute('data-id');
     $.ajax({
-        url: "/playlists/",
+        url: "/playlist/" + id + "/",
         type: "POST",
+        dataType: 'json',
         data: {
-        'django_play_button': true,
-        'play-button': favoriteId,
         'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
         },
-        dataType: 'json',
 
-        success: function(response) {
-            track_list = []
-             response.tracks.forEach(function(tracks) {
+        success: function(data) {
+            data.tracks.forEach(function(tracks) {
                 track_list.push({
                 'id': '1',
                 'name': tracks.title,
                 'path': tracks.audio_path,
                 'artist': "zxcursed",
-                'image': tracks.image,
+                'image': "/static/default.jpg"
                 })
             })
         },
+
         complete: function() {
                 loadTrack(track_index);
                 }
     });
 }
-
-$('.django_play_button').click(function() {
-    var playlistId = $(this).siblings('[name="play-button"]').val();
-    event.preventDefault();
-    $.ajax({
-        url: "/playlists/",
-        type: "POST",
-        data: {
-        'django_play_button': true,
-        'play-button': playlistId,
-        'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
-        },
-        dataType: 'json',
-
-        success: function(response) {
-            track_list = []
-             response.tracks.forEach(function(tracks) {
-                track_list.push({
-                'id': '1',
-                'name': tracks.title,
-                'path': tracks.audio_path,
-                'artist': "zxcursed",
-                'image': tracks.image,
-                })
-            })
-        },
-        complete: function() {
-                loadTrack(track_index);
-                }
-    });
-})
 
 function loadTrack(track_index) {
 // обнуляет ползунок после предыдущего трека

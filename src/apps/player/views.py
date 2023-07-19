@@ -76,26 +76,26 @@ def index(request):
 
 
 """выбор плейлиста по нажатию по id"""
-def select_playlist(request):
-    """get потому что с ajax передаю??"""
-    if request.method == "POST":
-        current_playlist_id = request.POST.get('playlist_id')
-        current_playlist = Playlist.objects.get(id=current_playlist_id)
-
-        current_playlist_data = {
-            'name': current_playlist.name,
-            'tracks': [],
-        }
-
-        for track in current_playlist.tracks.all():
-            track_data = {
-                'title': track.name,
-                'audio_path': track.location,
-            }
-
-            current_playlist_data['tracks'].append(track_data)
-
-        return JsonResponse(current_playlist_data)
+# def select_playlist(request):
+#     """get потому что с ajax передаю??"""
+#     if request.method == "POST":
+#         current_playlist_id = request.POST.get('playlist_id')
+#         current_playlist = Playlist.objects.get(id=current_playlist_id)
+#
+#         current_playlist_data = {
+#             'name': current_playlist.name,
+#             'tracks': [],
+#         }
+#
+#         for track in current_playlist.tracks.all():
+#             track_data = {
+#                 'title': track.name,
+#                 'audio_path': track.location,
+#             }
+#
+#             current_playlist_data['tracks'].append(track_data)
+#
+#         return JsonResponse(current_playlist_data)
 
 
 def update_playlist(playlist):
@@ -164,6 +164,8 @@ def tracks(request):
 
 """если play то с ajax как то и чтобы id отправлялся а если список треков то просто выводится но наверное получается также по нажатию"""
 def playlists(request):
+
+    """когда страница загружается вызывается в мини плеер favorite плейлист пользователя"""
     current_user = request.user
 
     if request.method == "POST":
@@ -184,13 +186,44 @@ def playlists(request):
                 }
 
                 current_playlist_data['tracks'].append(track_data)
-            print(current_playlist_data)
 
             return JsonResponse(current_playlist_data, content_type='application/json')
 
-    list_playlists = UserMusic.objects.filter(user=current_user)
+        if "django_playlist_tracks_button" in request.POST:
+            playlist_id = request.POST.get('play-button')
+            return redirect('playlist', id=playlist_id)
 
-    return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
+
+    list_playlists = UserMusic.objects.filter(user=current_user)
+    favorite_playlist = Playlist.objects.get(user=current_user, name='favorite')
+    favorite_playlist_id = UserMusic.objects.get(user=current_user, playlist=favorite_playlist)
+
+    return render(request, 'app/user_playlists.html', {'favorite_id': favorite_playlist_id, 'playlists': list_playlists})
+
+
+def playlist_tracks(request, id):
+    user_playlist = UserMusic.objects.get(id=id)
+    if request.method == "POST":
+        current_playlist = Playlist.objects.get(id=user_playlist.playlist.id)
+
+        current_playlist_data = {
+            'name': current_playlist.name,
+            'tracks': [],
+        }
+
+        for track in current_playlist.tracks.all():
+            track_data = {
+                'title': track.name,
+                'audio_path': track.location,
+            }
+
+            current_playlist_data['tracks'].append(track_data)
+
+        return JsonResponse(current_playlist_data, content_type='application/json')
+
+    playlist = Playlist.objects.get(id=user_playlist.playlist.id)
+
+    return render(request, 'app/playlist_tracks.html', {'id': id, 'playlist': playlist})
 
 
 def top_playlists(request):

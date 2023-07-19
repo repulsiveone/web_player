@@ -4,26 +4,23 @@
     <meta charset="UTF-8">
     <title>Title</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
-<link rel="stylesheet" type="text/css" href="/static/css/user_playlists.css">
+<link rel="stylesheet" type="text/css" href="/static/css/playlist_tracks.css">
 </head>
 <body>
-
-<div class="container">
-{% for i in playlists %}
 <form method="post">{% csrf_token %}
     <div class="playlist">
-        <img src="/static/default.jpg" alt="Playlist Image">
-        <h3>{{ i.playlist.name }}</h3>
-        <div class="playlist-buttons">
-            <input type="hidden" name='play-button' value={{i.playlist.id}}>
-			<input type="hidden" name="fav_id" id="fav-id" value="{{favorite_id.id}}">
-            <button type="submit" name="django_play_button"  class="django_play_button">Play</button>
-            <button type="submit" name="django_playlist_tracks_button" class="django_playlist_tracks_button">список треков</button>
+      {% for track in playlist.tracks.all %}
+      <div class="track-item">
+        <button class="play-button" data-location="{{ track.location }}">Play</button>
+        <div class="track-info">
+          <div class="track-name"></div>
+          <h3>{{ track.name }}</h3>
+          <p>{{ track.location }}</p>
         </div>
+      </div>
+      {% endfor %}
     </div>
-</form>
-{% endfor %}
-</div>
+
 
 <div class="thing3">
 <div class="player">
@@ -65,9 +62,11 @@
 	</div>
 </div>
 </div>
-
-
+<div id="example" data-id="{{ id }}"></div>
+</form>
 <script src='http://code.jquery.com/jquery-latest.min.js'></script>
-<script id="test" src="/static/js_scripts/user_playlists.js"></script>
+<script id="test" src="/static/js_scripts/playlist_tracks.js">
+</script>
 </body>
+
 </html>

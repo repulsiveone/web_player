@@ -12,6 +12,7 @@ urlpatterns = [
     # """music urls for user"""
     path('playlists/', views.playlists, name='playlists'),
     path('tracks/', views.tracks, name='tracks'),
+    path('playlist/<int:id>/', views.playlist_tracks, name='playlist'),
     path('history', views.history, name='history'),
 
     path('chats', views.chats, name='chats'),
