@@ -1,0 +1,106 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/newplayer.css">
+    <title>Title</title>
+</head>
+<div id="wrap">
+    <header>
+
+        <button class="image-button"></button>
+
+        <nav class="side-panel">
+          <div class="wrapper">
+              <a class="first after" href="/homepage">homepage</a><br>
+              <a class="first after" href="/playlists">playlists</a><br>
+              <a class="first after" href="/tracks">tracks</a><br>
+              <a class="first after" href="#">userpage</a>
+
+
+          </div>
+        </nav>
+
+        <div class="nameof">
+            <h1>Listentay</h1>
+        </div>
+
+        <div class="thing3">
+        <div class="player">
+
+            <!-- разделы для отображения деталей -->
+            <div class="details">
+            <div class="track-art"></div>
+            <div class="player-track-name">Track Name</div>
+            <div class="track-artist">Track Artist</div>
+            </div>
+
+            <!-- раздел для отображения кнопок трека -->
+            <div class="buttons">
+            <div class="prev-track" onclick="prevTrack()">
+                <i class="fa fa-step-backward fa-2x"></i>
+            </div>
+            <div class="playpause-track" onclick="playpauseTrack()">
+                <i class="fa fa-play-circle fa-5x"></i>
+            </div>
+            <div class="next-track" onclick="nextTrack()">
+                <i class="fa fa-step-forward fa-2x"></i>
+            </div>
+            </div>
+
+            <!-- раздел для отображения ползунка-->
+            <div class="slider_container1">
+            <div class="current-time">00:00</div>
+            <input type="range" min="1" max="100"
+                value="0" class="seek_slider" onchange="seekTo()">
+            <div class="total-duration">00:00</div>
+            </div>
+
+            <!-- раздел для отображения ползунка громкости-->
+            <div class="slider_container2">
+            <i class="fa fa-volume-down"></i>
+            <input type="range" min="1" max="100"
+                value="99" class="volume_slider" onchange="setVolume()">
+            <i class="fa fa-volume-up"></i>
+            </div>
+        </div>
+        </div>
+
+        <button class="image-button2"></button>
+        <nav class="side-panel2">
+            <div class="container" id="container"></div>
+        </nav>
+
+    </header>
+</div>
+
+<body>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+        {% block stylesheets %}{% endblock %}
+        {% block scripts %}{% endblock %}
+    </div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script id="test" src="/static/js_scripts/test_player.js"></script>
+<script>
+    const menuToggle = document.querySelector('.image-button');
+    const sidePanel = document.querySelector('.side-panel');
+
+    menuToggle.addEventListener('click', function() {
+        sidePanel.classList.toggle('open');
+    });
+
+    const menuToggle2 = document.querySelector('.image-button2');
+    const sidePanel2 = document.querySelector('.side-panel2');
+
+    menuToggle2.addEventListener('click', function() {
+        sidePanel2.classList.toggle('open');
+    });
+</script>
+</body>
+</html>
