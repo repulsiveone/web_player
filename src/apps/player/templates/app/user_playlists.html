@@ -1,73 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
-<link rel="stylesheet" type="text/css" href="/static/css/user_playlists.css">
-</head>
-<body>
+{% extends './base.html' %}
 
-<div class="container">
+{% block content %}
+
+<form method="get">{% csrf_token %}
+<div class="container-playlists">
+    <div class="title">
+        <h1>Плейлисты</h1>
+    </div>
 {% for i in playlists %}
-<form method="post">{% csrf_token %}
+
     <div class="playlist">
-        <img src="/static/default.jpg" alt="Playlist Image">
-        <h3>{{ i.playlist.name }}</h3>
-        <div class="playlist-buttons">
-            <input type="hidden" name='play-button' value={{i.playlist.id}}>
-			<input type="hidden" name="fav_id" id="fav-id" value="{{favorite_id.id}}">
-            <button type="submit" name="django_play_button"  class="django_play_button">Play</button>
-            <button type="submit" name="django_playlist_tracks_button" class="django_playlist_tracks_button">список треков</button>
+        <div class="image-container">
+            <img src='/static/default.jpg' alt=''>
+            <button id="play-img" type="submit" onclick="getPlaylistData({{ i.playlist.id }})"><i class="fa fa-play-circle fa-5x"></i></button>
+            <h3>{{ i.playlist.name }}</h3>
         </div>
     </div>
-</form>
+
 {% endfor %}
+
 </div>
+</form>
+{% endblock %}
 
-<div class="thing3">
-<div class="player">
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="/static/css/user_playlists.css">
+{% endblock %}
 
-	<!-- разделы для отображения деталей -->
-	<div class="details">
-	<div class="track-art"></div>
-	<div class="player-track-name">Track Name</div>
-	<div class="track-artist">Track Artist</div>
-	</div>
-
-	<!-- раздел для отображения кнопок трека -->
-	<div class="buttons">
-	<div class="prev-track" onclick="prevTrack()">
-		<i class="fa fa-step-backward fa-2x"></i>
-	</div>
-	<div class="playpause-track" onclick="playpauseTrack()">
-		<i class="fa fa-play-circle fa-5x"></i>
-	</div>
-	<div class="next-track" onclick="nextTrack()">
-		<i class="fa fa-step-forward fa-2x"></i>
-	</div>
-	</div>
-
-	<!-- раздел для отображения ползунка-->
-	<div class="slider_container">
-	<div class="current-time">00:00</div>
-	<input type="range" min="1" max="100"
-		value="0" class="seek_slider" onchange="seekTo()">
-	<div class="total-duration">00:00</div>
-	</div>
-
-	<!-- раздел для отображения ползунка громкости-->
-	<div class="slider_container">
-	<i class="fa fa-volume-down"></i>
-	<input type="range" min="1" max="100"
-		value="99" class="volume_slider" onchange="setVolume()">
-	<i class="fa fa-volume-up"></i>
-	</div>
-</div>
-</div>
-
-
-<script src='http://code.jquery.com/jquery-latest.min.js'></script>
+{% block scripts %}
 <script id="test" src="/static/js_scripts/user_playlists.js"></script>
-</body>
-</html>
+{% endblock %}

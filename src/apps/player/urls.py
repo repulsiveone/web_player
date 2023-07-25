@@ -14,6 +14,8 @@ urlpatterns = [
     path('tracks/', views.tracks, name='tracks'),
     path('playlist/<int:id>/', views.playlist_tracks, name='playlist'),
     path('history', views.history, name='history'),
+    path('select_playlist/', views.select_playlist, name='select_playlist'),
+    path('default_playlist/', views.default_playlist, name='default_playlist'),
 
     path('chats', views.chats, name='chats'),
 

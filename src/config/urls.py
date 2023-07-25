@@ -27,5 +27,7 @@ urlpatterns = [
     path('tracks/', include('apps.player.urls')),
     path('playlists/', include('apps.player.urls')),
     path('playlist/<int:id>/', include('apps.player.urls')),
+    path('select_playlist/', include('apps.player.urls')),
+    path('default_playlist/', include('apps.player.urls')),
     path('load/', include('apps.player.urls')),
 ]

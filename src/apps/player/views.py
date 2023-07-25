@@ -53,171 +53,113 @@ def log_in(request):
 
 """главная страница где по умолчанию плейлист favorite для пользователя"""
 def index(request):
+
+    return render(request, 'app/homepage.html')
+
+
+# for /homepage and /tracks.
+def default_playlist(request):
     current_user = request.user
-    if request.method == 'POST':
-        current_playlist = Playlist.objects.get(user=current_user, name='favorite')
-        """на этой странице не нужно название плейлиста и тд, нужна вся информация про треки"""
-        current_playlist_data = {
-            'name': current_playlist.name,
-            'tracks': [],
-        }
-
-        for track in current_playlist.tracks.all():
-            track_data = {
-                'title': track.name,
-                'audio_path': track.location,
-                'path': track.location,
-                'image': track.image,
-            }
-
-            current_playlist_data['tracks'].append(track_data)
-        return JsonResponse(current_playlist_data, content_type='application/json')
-
-    playlist = Playlist.objects.get(user=current_user, name='favorite')
-
-    return render(request, 'app/homepage.html', {'playlist': playlist})
-
-
-"""выбор плейлиста по нажатию по id"""
-# def select_playlist(request):
-#     """get потому что с ajax передаю??"""
-#     if request.method == "POST":
-#         current_playlist_id = request.POST.get('playlist_id')
-#         current_playlist = Playlist.objects.get(id=current_playlist_id)
-#
-#         current_playlist_data = {
-#             'name': current_playlist.name,
-#             'tracks': [],
-#         }
-#
-#         for track in current_playlist.tracks.all():
-#             track_data = {
-#                 'title': track.name,
-#                 'audio_path': track.location,
-#             }
-#
-#             current_playlist_data['tracks'].append(track_data)
-#
-#         return JsonResponse(current_playlist_data)
-
-
-def update_playlist(playlist):
+    current_playlist = Playlist.objects.get(user=current_user, name='favorite')
+    """на этой странице не нужно название плейлиста и тд, нужна вся информация про треки"""
     current_playlist_data = {
-        'name': playlist.name,
+        'name': current_playlist.name,
         'tracks': [],
     }
 
-    for track in playlist.tracks.all():
+    for track in current_playlist.tracks.all():
         track_data = {
             'title': track.name,
             'audio_path': track.location,
+            'path': track.location,
+            'image': track.image,
+        }
+
+        current_playlist_data['tracks'].append(track_data)
+    print(current_playlist_data)
+    return JsonResponse(current_playlist_data)
+
+
+"""выбор плейлиста по нажатию по id"""
+def select_playlist(request):
+    current_user = request.user
+#     """get потому что с ajax передаю??"""
+    playlist_id = request.GET.get('id')
+    print(playlist_id)
+    current_playlist = UserMusic.objects.get(user=current_user, id=playlist_id)
+
+    current_playlist_data = {
+        'name': current_playlist.playlist.name,
+        'tracks': [],
+    }
+
+    for track in current_playlist.playlist.tracks.all():
+        track_data = {
+            'title': track.name,
+            'path': track.location,
+            'image': track.image,
+            'author': track.author,
         }
 
         current_playlist_data['tracks'].append(track_data)
 
+    print(current_playlist_data)
+
     return JsonResponse(current_playlist_data)
 
 
-def add_track(request):
-    if request.method == "POST":
-        track_id = request.POST.get('track_id')
-        track = TrackList.objects.get(id=track_id)
-        playlist_id = request.POST.get('playlist_id')
-        playlist = Playlist.objects.get(id=playlist_id)
-        playlist.tracks.add(track)
-        playlist.save()
-        update_playlist(playlist)
-
-
-def delete_track(request):
-    if request.method == "POST":
-        track_id = request.POST.get('track_id')
-        track = TrackList.objects.get(id=track_id)
-        playlist_id = request.POST.get('playlist_id')
-        playlist = Playlist.objects.get(id=playlist_id)
-        playlist.tracks.remove(track)
-        playlist.save()
-        update_playlist(playlist)
-
-
-def test_json(request):
-    track_list = [{'title': 'NICHEVO', 'audio_path': '/static/Kai_Angel_9mice_-_N1CHEVO_75442759_rrTGxEE.mp3', 'path': '/static/Kai_Angel_9mice_-_N1CHEVO_75442759_rrTGxEE.mp3', 'image': '/static/moGD5CaUq8g.jpg' , 'author': 'kai'},
-                  {'title': 'paris', 'audio_path': '/static/Kai_Angel_-_PARIS_2008_76293616_iOrfeKA.mp3', 'path': '/static/Kai_Angel_-_PARIS_2008_76293616_iOrfeKA.mp3', 'image': '/static/moGD5CaUq8g_ick7wx1.jpg', 'author': 'kai'},
-                  {'title': 'липстик', 'audio_path': '/static/Kai_Angel_9mice_-_LIPSTICK_75442758_7GqYUye.mp3', 'path': '/static/Kai_Angel_9mice_-_LIPSTICK_75442758_7GqYUye.mp3', 'image': '/static/moGD5CaUq8g_HYc3Rnq.jpg', 'author': 'kai'},
-                  {'title': 'Stargirl_Interlude', 'audio_path': '/static/Lana_Del_Rey_The_Weeknd_-_Stargirl_Interlude_47829074.mp3', 'path': '/static/Lana_Del_Rey_The_Weeknd_-_Stargirl_Interlude_47829074.mp3', 'image': '/static/bd40e40dc8f0e5638c17b42ac3bcdff0_oKZT3gi.jpg', 'author': 'the weeknd'},
-                  {'title': 'Blinding_Lights', 'audio_path': '/static/The_Weeknd_-_Blinding_Lights_67509023.mp3', 'path': '/static/The_Weeknd_-_Blinding_Lights_67509023.mp3', 'image': '/static/bd40e40dc8f0e5638c17b42ac3bcdff0_oKZT3gi.jpg', 'author': 'the weeknd'},
-                  {'title': 'Save_Your_Tears', 'audio_path': '/static/The_Weeknd_-_Save_Your_Tears_68853145.mp3', 'path': '/static/The_Weeknd_-_Save_Your_Tears_68853145.mp3', 'image': '/static/bd40e40dc8f0e5638c17b42ac3bcdff0_oKZT3gi.jpg', 'author': 'the weeknd'},
-                  {'title': 'the hills', 'audio_path': '/static/The_Weeknd_-_The_Hills_47966148.mp3', 'path': '/static/The_Weeknd_-_The_Hills_47966148.mp3', 'image': '/static/bd40e40dc8f0e5638c17b42ac3bcdff0_oKZT3gi.jpg', 'author': 'the weeknd'},
-                  {'title': 'starboy', 'audio_path': '/static/The_Weeknd_Daft_Punk_-_Starboy_47829067.mp3', 'path': '/static/The_Weeknd_Daft_Punk_-_Starboy_47829067.mp3', 'image': '/static/bd40e40dc8f0e5638c17b42ac3bcdff0_oKZT3gi.jpg', 'author': 'the weeknd'}]
-
-    return JsonResponse({"json_list": track_list})
+# def update_playlist(playlist):
+#     current_playlist_data = {
+#         'name': playlist.name,
+#         'tracks': [],
+#     }
+#
+#     for track in playlist.tracks.all():
+#         track_data = {
+#             'title': track.name,
+#             'audio_path': track.location,
+#         }
+#
+#         current_playlist_data['tracks'].append(track_data)
+#
+#     return JsonResponse(current_playlist_data)
+#
+#
+# def add_track(request):
+#     if request.method == "POST":
+#         track_id = request.POST.get('track_id')
+#         track = TrackList.objects.get(id=track_id)
+#         playlist_id = request.POST.get('playlist_id')
+#         playlist = Playlist.objects.get(id=playlist_id)
+#         playlist.tracks.add(track)
+#         playlist.save()
+#         update_playlist(playlist)
+#
+#
+# def delete_track(request):
+#     if request.method == "POST":
+#         track_id = request.POST.get('track_id')
+#         track = TrackList.objects.get(id=track_id)
+#         playlist_id = request.POST.get('playlist_id')
+#         playlist = Playlist.objects.get(id=playlist_id)
+#         playlist.tracks.remove(track)
+#         playlist.save()
+#         update_playlist(playlist)
 
 
 def tracks(request):
     current_user = request.user
-    # if request.method == "POST":
-    #     current_user = request.user
-    #     current_playlist = Playlist.objects.get(user=current_user, name='favorite')
-    #
-    #     current_playlist_data = {
-    #         'name': current_playlist.name,
-    #         'tracks': [],
-    #     }
-    #
-    #     for track in current_playlist.tracks.all():
-    #         track_data = {
-    #             'title': track.name,
-    #             'audio_path': track.location,
-    #         }
-    #
-    #         current_playlist_data['tracks'].append(track_data)
-    #     # print(current_playlist_data)
-    #     return JsonResponse(current_playlist_data, content_type='application/json')
-    #
     playlist = Playlist.objects.get(user=current_user, name='favorite')
 
     return render(request, 'app/user_music.html', {'playlist': playlist})
 
-    # return render(request, 'app/user_music.html')
 
-"""если play то с ajax как то и чтобы id отправлялся а если список треков то просто выводится но наверное получается также по нажатию"""
 def playlists(request):
-    #
-    # """когда страница загружается вызывается в мини плеер favorite плейлист пользователя"""
     current_user = request.user
-    #
-    # if request.method == "POST":
-    #     if "django_play_button" in request.POST:
-    #         playlist_id = request.POST.get('play-button')
-    #         current_playlist = UserMusic.objects.get(user=current_user, id=playlist_id)
-    #
-    #         current_playlist_data = {
-    #             'name': current_playlist.playlist.name,
-    #             'tracks': [],
-    #         }
-    #
-    #         for track in current_playlist.playlist.tracks.all():
-    #             track_data = {
-    #                 'title': track.name,
-    #                 'audio_path': track.location,
-    #                 'image': track.image,
-    #             }
-    #
-    #             current_playlist_data['tracks'].append(track_data)
-    #
-    #         return JsonResponse(current_playlist_data, content_type='application/json')
-    #
-    #     if "django_playlist_tracks_button" in request.POST:
-    #         playlist_id = request.POST.get('play-button')
-    #         return redirect('playlist', id=playlist_id)
-    #
-    #
+
     list_playlists = UserMusic.objects.filter(user=current_user)
-    favorite_playlist = Playlist.objects.get(user=current_user, name='favorite')
-    favorite_playlist_id = UserMusic.objects.get(user=current_user, playlist=favorite_playlist)
-    #
-    return render(request, 'app/user_playlists.html', {'favorite_id': favorite_playlist_id, 'playlists': list_playlists})
-    # return render(request, 'app/user_playlists.html')
+
+    return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
 
 
 def playlist_tracks(request, id):

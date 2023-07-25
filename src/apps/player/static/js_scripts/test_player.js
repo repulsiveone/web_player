@@ -25,18 +25,37 @@ let updateTimer;
 let curr_track = document.createElement('audio');
 let containerElement = document.getElementById("container");
 let track_list = []
-window.onload = load()
-function load() {
-//$(document).ready(function() {
-      $.ajax({
-         url: '/ajax/track-list/',  // URL-адрес вашего представления
-         dataType: 'json',
-         success: function(data) {
-            // Обработка полученных данных
-            track_list = data.json_list;
-            console.log(track_list);
-            // создает элементы в правом выпадающем окне.
-            for (let i = 0; i < track_list.length; i++) {
+
+function defaultPlaylist() {
+  $.ajax({
+    url: 'default_playlist/',  // замените на свой URL-адрес Django
+    type: 'GET',
+    data: {
+      'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val(),
+    },
+    success: function(response){
+      track_list = []
+      // в этом месте вы можете обрабатывать полученные данные
+      response.tracks.forEach(function(tracks) {
+                track_list.push({
+                'id': '1',
+                'title': tracks.title,
+                'path': tracks.path,
+                'author': tracks.author,
+                'image': tracks.image,
+                })
+            })
+      localStorage.setItem('playlist', JSON.stringify(track_list));
+    },
+    complete: function() {
+        let existingCells = document.querySelectorAll('.cell');
+
+        // Удаляем каждый элемент
+        existingCells.forEach(cell => {
+          cell.remove();
+        });
+
+        for (let i = 0; i < track_list.length; i++) {
                 let cellElement = document.createElement("div");
                 cellElement.insertAdjacentHTML('beforeend', `
                 <img src='${track_list[i].image}' alt=''>
@@ -47,12 +66,93 @@ function load() {
                 cellElement.classList.add("cell");
                 containerElement.append(cellElement);
             }
+         loadTrack(track_index);
+         playpauseTrack();
          },
-         complete: function() {
-            loadTrack(track_index);
-         }
-      });
-   };
+    error: function(xhr, status, error) {
+      // обработка ошибки AJAX
+      console.log(error);
+    }
+  });
+}
+
+var saved_playlist = JSON.parse(localStorage.getItem('playlist'));
+var saved_volume = JSON.parse(localStorage.getItem('volume'));
+
+if (saved_volume) {
+    curr_track.volume = saved_volume;
+}else{
+}
+
+if(saved_playlist){
+  // Использовать плейлист
+  track_list = saved_playlist;
+  for (let i = 0; i < track_list.length; i++) {
+                let cellElement = document.createElement("div");
+                cellElement.insertAdjacentHTML('beforeend', `
+                <img src='${track_list[i].image}' alt=''>
+                <div class='info'>
+                <h2>${track_list[i].title}</h2>
+                <p>${track_list[i].author}</p>
+                </div>`);
+                cellElement.classList.add("cell");
+                containerElement.append(cellElement);
+            }
+}else{
+    defaultPlaylist();
+}
+
+function getPlaylistData(playlistId) {
+  event.preventDefault();
+  $.ajax({
+    url: '/select_playlist/',  // замените на свой URL-адрес Django
+    type: 'GET',
+    data: {
+      'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val(),
+      'id': playlistId
+    },
+    success: function(response){
+      track_list = []
+      // в этом месте вы можете обрабатывать полученные данные
+      response.tracks.forEach(function(tracks) {
+                track_list.push({
+                'id': '1',
+                'title': tracks.title,
+                'path': tracks.path,
+                'author': tracks.author,
+                'image': tracks.image,
+                })
+            })
+      localStorage.setItem('playlist', JSON.stringify(track_list));
+    },
+    complete: function() {
+        let existingCells = document.querySelectorAll('.cell');
+
+        // Удаляем каждый элемент
+        existingCells.forEach(cell => {
+          cell.remove();
+        });
+
+        for (let i = 0; i < track_list.length; i++) {
+                let cellElement = document.createElement("div");
+                cellElement.insertAdjacentHTML('beforeend', `
+                <img src='${track_list[i].image}' alt=''>
+                <div class='info'>
+                <h2>${track_list[i].title}</h2>
+                <p>${track_list[i].author}</p>
+                </div>`);
+                cellElement.classList.add("cell");
+                containerElement.append(cellElement);
+            }
+         loadTrack(track_index);
+         playpauseTrack();
+         },
+    error: function(xhr, status, error) {
+      // обработка ошибки AJAX
+      console.log(error);
+    }
+  });
+}
 
 $(document).ready(function() {
   function loadContent(url) {
@@ -75,13 +175,14 @@ $(document).ready(function() {
   loadContent(window.location.href);
 });
 
+// tracks
 function playcurrTrack(location) {
     console.log(location);
     const trackIndex = getTrackIndexByPath(location);
     loadTrack(trackIndex);
     playTrack();
 }
-
+// tracks
 function getTrackIndexByPath(path) {
   const index = track_list.findIndex(item => item.path === path);
   return index;
@@ -204,6 +305,7 @@ function loadTrack(track_index) {
             // установка громкости в соответствии с
              // процентом установленного ползунка громкости
             curr_track.volume = volume_slider.value / 100;
+            localStorage.setItem('volume', JSON.stringify(volume_slider.value / 100));
             }
 
             function seekUpdate() {
