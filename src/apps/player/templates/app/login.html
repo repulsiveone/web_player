@@ -1,18 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
 </head>
-<body>
-    <form method="post">
-        {% csrf_token %}
-        {% for field in form %}<br>
-        {{ field.label_tag }}<br>
-        {{ field }}
+<header>
+    <h1 class="nameof" style="transform: scale(2.0);">Listentay</h1>
+</header>
+<body class="container text-center" style="display: flex; align-items: center;">
+<main class="container form-signin w-1000 m-auto">
+  <form method="post" style="width: 1000px; margin-left: -250px; transform: scale(1.4);">{% csrf_token %}
 
-        {% endfor %}
-        <button type="submit">Login</button>
-    </form>
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    {% for field in form %}
+    <div class="form-floating">
+      {{ field }}
+      <label style="">{{field.label}}</label>
+    </div>
+    {% endfor %}
+    <div class="checkbox mb-3">
+      <label>
+        <input type="checkbox" name="remember-me"> Remember me
+      </label>
+    </div>
+    <button class="w-10 btn btn-lg btn-primary" type="submit">Sign in</button>
+    <br><a href="">Do not have an account yet</a>
+        <br><a href="">Forgot Your Password?</a>
+
+  </form>
+</main>
 </body>
 </html>

@@ -1,0 +1,13 @@
+body {
+  background-image: url(/static/maxresdefault.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.nameof {
+    position: absolute;
+    top: 50px;
+    left: 420px;
+    font-family: "Helvetica", Arial, sans-serif;
+}
