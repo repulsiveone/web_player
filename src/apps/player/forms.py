@@ -110,8 +110,25 @@ class SignUpForm(BaseUserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    username = forms.EmailField(label='Email', required=True)
+    username = forms.EmailField(label='Email', required=True, widget=forms.TextInput(attrs={'class': 'container form-control', 'style': "width: 300px; ", 'placeholder': 'email'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'container form-control', 'style': "width: 300px;", 'placeholder': 'password'}))
 
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('username')
+        # password = cleaned_data.get('password')
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist: #работает но все равно подсвечивается
+            self.add_error('username', 'Неправильный адрес электронной почты')
+            return
+
+        # self.add_error('password', 'Неправильный пароль')
+
+        cleaned_data['email'] = user
+
+        return cleaned_data
 
 class PlaylistForm(forms.ModelForm):
     class Meta:

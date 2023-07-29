@@ -31,13 +31,16 @@ class Playlist(models.Model):
 """повторяется playlist придумать как правильно создать связь"""
 class CustomUser(AbstractUser):
     id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=30, unique=False)
     last_name = None
     first_name = None
     last_login = None
     date_joined = None
-    email = models.EmailField(max_length=60)
+    email = models.EmailField(max_length=60, unique=True)
     any_playlist = models.ManyToManyField(Playlist, through='UserMusic')
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
     # objects = models.Manager()
 
     def __str__(self):

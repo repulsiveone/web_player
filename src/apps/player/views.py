@@ -24,15 +24,14 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            """работает но не логинит"""
             user = form.save()
             playlist = Playlist.objects.create(name='favorite', user=user)
+            UserMusic.user = playlist
             email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(email=email, password=password)
+            user = CustomUser.objects.get(email=email)
             login(request, user)
 
-            return redirect('/login')
+            return redirect('/homepage')
 
     else:
         form = SignUpForm()
@@ -42,10 +41,12 @@ def signup(request):
 def log_in(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('/homepage')
+        if form.is_valid() and form.clean():
+            email = form.cleaned_data['username']
+            user = CustomUser.objects.get(email=email)
+            if user is not None:
+                login(request, user)
+                return redirect('/homepage')
     else:
         form = LoginForm()
 
@@ -53,7 +54,9 @@ def log_in(request):
 
 """главная страница где по умолчанию плейлист favorite для пользователя"""
 def index(request):
-
+    current_user = request.user
+    user = CustomUser.objects.get(id=current_user.id)
+    print(user.check_password('adminadminad'))
     return render(request, 'app/homepage.html')
 
 
@@ -148,43 +151,25 @@ def select_playlist(request):
 
 
 def tracks(request):
-    current_user = request.user
-    playlist = Playlist.objects.get(user=current_user, name='favorite')
+    # current_user = request.user
+    # playlist = Playlist.objects.get(user=current_user, name='favorite')
 
     return render(request, 'app/user_music.html', {'playlist': playlist})
 
 
 def playlists(request):
     current_user = request.user
-
     list_playlists = UserMusic.objects.filter(user=current_user)
 
     return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
 
 
 def playlist_tracks(request, id):
-    user_playlist = UserMusic.objects.get(id=id)
-    if request.method == "POST":
-        current_playlist = Playlist.objects.get(id=user_playlist.playlist.id)
+    current_user = request.user
+    curr_playlist = UserMusic.objects.get(id=id)
+    playlist = Playlist.objects.get(user=current_user, id=curr_playlist.playlist.id)
 
-        current_playlist_data = {
-            'name': current_playlist.name,
-            'tracks': [],
-        }
-
-        for track in current_playlist.tracks.all():
-            track_data = {
-                'title': track.name,
-                'audio_path': track.location,
-            }
-
-            current_playlist_data['tracks'].append(track_data)
-
-        return JsonResponse(current_playlist_data, content_type='application/json')
-
-    playlist = Playlist.objects.get(id=user_playlist.playlist.id)
-
-    return render(request, 'app/playlist_tracks.html', {'id': id, 'playlist': playlist})
+    return render(request, 'app/user_music.html', {'playlist': playlist})
 
 
 def top_playlists(request):

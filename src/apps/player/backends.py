@@ -13,3 +13,10 @@ class EmailBackend(ModelBackend):
             if user.check_password(password):
                 return user
         return None
+
+    # def get_user(self, email):
+    #     UserModel = get_user_model()
+    #     try:
+    #         return UserModel.objects.get(email=email.lower())
+    #     except UserModel.DoesNotExist:
+    #         return None
