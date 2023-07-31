@@ -13,7 +13,7 @@
         <div class="image-container">
             <img src='/static/default.jpg' alt=''>
             <button id="play-img" type="submit" onclick="getPlaylistData({{ i.playlist.id }})"><i class="fa fa-play-circle fa-5x"></i></button>
-            <h3>{{ i.playlist.name }}</h3>
+            <h3 style="transform: scale(0.3); margin-top: -50px;"><a href="{% url 'playlist' i.playlist.id %}">{{ i.playlist.name }}</a></h3>
         </div>
     </div>
 

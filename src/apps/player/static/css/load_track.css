@@ -1,0 +1,43 @@
+.container-tracks {
+    overflow-y: auto;
+    margin:100px auto;
+    width: 1000px;
+    height: 500px;
+    background: #b0c4de;
+    color: #fff;
+    padding: 10px;
+    border-radius: 15px;
+   }
+
+form {
+  height: 180px;
+}
+
+label {
+  display: block;
+  width: 150px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  margin-left: 252px;
+}
+
+input[type=file] {
+  margin-left: 252px;
+  width: 500px;
+  display: block;
+}
+
+input[type=file]::file-selector-button {
+  margin-top: 10px;
+  border: none;
+  background: #293659;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+  background: #0d45a5;
+}

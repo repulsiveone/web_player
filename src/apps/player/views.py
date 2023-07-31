@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse
 from django.shortcuts import render, redirect
@@ -21,42 +22,49 @@ from django.http import JsonResponse, HttpResponse
 
 
 def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            playlist = Playlist.objects.create(name='favorite', user=user)
-            UserMusic.user = playlist
-            email = form.cleaned_data.get('email')
-            user = CustomUser.objects.get(email=email)
-            login(request, user)
-
-            return redirect('/homepage')
-
+    if request.user.is_authenticated:
+        return redirect('/homepage')
     else:
-        form = SignUpForm()
+        if request.method == 'POST':
+            form = SignUpForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                playlist = Playlist.objects.create(name='favorite', user=user)
+                UserMusic.objects.create(user=user, playlist=playlist)
+                login(request, user)
+
+                return redirect('/homepage')
+
+        else:
+            form = SignUpForm()
+
     return render(request, 'app/signup.html', {'form': form})
 
 
 def log_in(request):
-    if request.method == 'POST':
-        form = LoginForm(data=request.POST)
-        if form.is_valid() and form.clean():
-            email = form.cleaned_data['username']
-            user = CustomUser.objects.get(email=email)
-            if user is not None:
-                login(request, user)
-                return redirect('/homepage')
+    if request.user.is_authenticated:
+        return redirect('/homepage')
     else:
-        form = LoginForm()
+        if request.method == 'POST':
+            form = LoginForm(data=request.POST)
+            if form.is_valid() and form.clean():
+                email = form.cleaned_data['username']
+                user = CustomUser.objects.get(email=email)
+                remember_me = request.POST.get('remember-me')
+                if not remember_me:
+                    request.session.set_expiry(0)
+                    request.session.modified = True
+                if user is not None:
+                    login(request, user)
+                    return redirect('/homepage')
+        else:
+            form = LoginForm()
 
     return render(request, 'app/login.html', {'form': form})
 
 """главная страница где по умолчанию плейлист favorite для пользователя"""
 def index(request):
-    current_user = request.user
-    user = CustomUser.objects.get(id=current_user.id)
-    print(user.check_password('adminadminad'))
+    print(request.user.is_active)
     return render(request, 'app/homepage.html')
 
 
@@ -151,12 +159,13 @@ def select_playlist(request):
 
 
 def tracks(request):
-    # current_user = request.user
-    # playlist = Playlist.objects.get(user=current_user, name='favorite')
+    current_user = request.user
+    playlist = Playlist.objects.get(user=current_user, name='favorite')
 
     return render(request, 'app/user_music.html', {'playlist': playlist})
 
 
+# @login_required
 def playlists(request):
     current_user = request.user
     list_playlists = UserMusic.objects.filter(user=current_user)

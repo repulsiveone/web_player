@@ -46,10 +46,6 @@ html {
     height: 300px;
 }
 
-.h3 {
-
-}
-
 .image-container {
     position: relative;
     display: inline-block;
@@ -69,7 +65,7 @@ html {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  margin-top: -20px; /* adjust this value to center the element */
+  margin-top: -25px; /* adjust this value to center the element */
   width: 200px;
   height: 200px;
   border-radius: 15px;

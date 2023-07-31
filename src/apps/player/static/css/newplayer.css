@@ -237,6 +237,11 @@ a {
     font-family: "Helvetica", Arial, sans-serif;
 }
 
+.nameof a {
+    color: #0B0718;
+    font-size: 35px;
+}
+
 .thing3 {
     position: absolute;
     /*background: #C6515C;*/

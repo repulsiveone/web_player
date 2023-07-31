@@ -65,10 +65,14 @@ class CustomUserChangeForm(UserChangeForm):
 class TrackListForm(forms.Form):
     MAX_FILE_SIZE = 20 * 1024 * 1024
 
-    track_file = forms.FileField(label='Track file', validators=[MaxFileSizeValidator(MAX_FILE_SIZE), MP3FileValidator()])
-    track_image = forms.FileField(label='Track image', validators=[MaxFileSizeValidator(MAX_FILE_SIZE), ImageFileValidator()], required=False)
-    track_title = forms.CharField(label='Track title', max_length=100, required=False)
-    track_author = forms.CharField(label='Track author', max_length=100, required=False)
+    track_file = forms.FileField(label='Выберите аудио файл',
+                                 validators=[MaxFileSizeValidator(MAX_FILE_SIZE), MP3FileValidator()])
+    track_image = forms.FileField(label='Выберите обложку',
+                                  validators=[MaxFileSizeValidator(MAX_FILE_SIZE), ImageFileValidator()], required=False)
+    track_title = forms.CharField(label='', max_length=100, required=False, widget=forms.TextInput(
+        attrs={'style': "width: 600px; border-radius: 5px; padding: 10px; top: 100%; left: 40%; transform: translate(40%, 100%);", 'placeholder': "Название трека"}))
+    track_author = forms.CharField(label='', max_length=100, required=False, widget=forms.TextInput(
+        attrs={'style': "width: 600px; border-radius: 5px; padding: 10px; top: 150%; left: 40%; transform: translate(40%, 150%);", 'placeholder': "Имя исполнителя"}))
 
     def clean_track_title(self):
         title = self.cleaned_data.get('track_title')
@@ -102,7 +106,15 @@ class UserMusicForm(forms.ModelForm):
         fields = ('user', 'playlist')
 
 
-class SignUpForm(BaseUserCreationForm):
+class SignUpForm(UserCreationForm):
+    username = forms.CharField(label='Username', widget=forms.TextInput(
+        attrs={'class': 'container form-control', 'style': "width: 300px; ", 'placeholder': 'username'}))
+    email = forms.EmailField(label='Email', required=True, widget=forms.TextInput(
+        attrs={'class': 'container form-control', 'style': "width: 300px; ", 'placeholder': 'email'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'container form-control', 'style': "width: 300px;", 'placeholder': 'password'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'container form-control', 'style': "width: 300px;", 'placeholder': 'password'}))
 
     class Meta:
         model = CustomUser
@@ -110,13 +122,14 @@ class SignUpForm(BaseUserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    username = forms.EmailField(label='Email', required=True, widget=forms.TextInput(attrs={'class': 'container form-control', 'style': "width: 300px; ", 'placeholder': 'email'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'container form-control', 'style': "width: 300px;", 'placeholder': 'password'}))
+    username = forms.EmailField(label='Email', required=True, widget=forms.TextInput(
+        attrs={'class': 'container form-control', 'style': "width: 300px; ", 'placeholder': 'email'}))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'container form-control', 'style': "width: 300px;", 'placeholder': 'password'}))
 
     def clean(self):
         cleaned_data = super().clean()
         email = cleaned_data.get('username')
-        # password = cleaned_data.get('password')
 
         try:
             user = CustomUser.objects.get(email=email)
@@ -124,11 +137,10 @@ class LoginForm(AuthenticationForm):
             self.add_error('username', 'Неправильный адрес электронной почты')
             return
 
-        # self.add_error('password', 'Неправильный пароль')
-
         cleaned_data['email'] = user
 
         return cleaned_data
+
 
 class PlaylistForm(forms.ModelForm):
     class Meta:

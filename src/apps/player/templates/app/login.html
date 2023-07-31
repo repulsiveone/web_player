@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/login.css">
 </head>
 <header>
-    <h1 class="nameof" style="transform: scale(2.0);">Listentay</h1>
+    <h1 class="nameof">Listentay</h1>
 </header>
 <body class="container text-center" style="display: flex; align-items: center;">
 <main class="container form-signin w-1000 m-auto">
@@ -13,6 +13,10 @@
 
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
     {% for field in form %}
+      {% if field.errors %}
+        {{ field.errors }}
+      {% endif %}
+
     <div class="form-floating">
       {{ field }}
       <label style="">{{field.label}}</label>
@@ -24,7 +28,7 @@
       </label>
     </div>
     <button class="w-10 btn btn-lg btn-primary" type="submit">Sign in</button>
-    <br><a href="">Do not have an account yet</a>
+    <br><a href="signup">Do not have an account yet</a>
         <br><a href="">Forgot Your Password?</a>
 
   </form>

@@ -1,0 +1,20 @@
+{% extends './base.html' %}
+
+{% block content %}
+<div class="container-tracks">
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+
+{% for field in form %}
+      <label style="">{{field.label}}</label>
+    {{ field }}
+{% endfor %}
+</form>
+</div>
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="/static/css/load_track.css">
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
