@@ -157,7 +157,7 @@ def select_playlist(request):
 #         playlist.save()
 #         update_playlist(playlist)
 
-
+@login_required(login_url='/login')
 def tracks(request):
     current_user = request.user
     playlist = Playlist.objects.get(user=current_user, name='favorite')
@@ -165,7 +165,7 @@ def tracks(request):
     return render(request, 'app/user_music.html', {'playlist': playlist})
 
 
-# @login_required
+@login_required(login_url='/login')
 def playlists(request):
     current_user = request.user
     list_playlists = UserMusic.objects.filter(user=current_user)
@@ -185,6 +185,7 @@ def top_playlists(request):
     pass
 
 
+@login_required(login_url='/login')
 def load_track(request):
     current_user = request.user
     if request.method == "POST":
