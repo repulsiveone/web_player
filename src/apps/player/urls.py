@@ -15,12 +15,18 @@ urlpatterns = [
     path('playlist/<int:id>/', views.playlist_tracks, name='playlist'),
     path('history', views.history, name='history'),
     path('select_playlist/', views.select_playlist, name='select_playlist'),
-    path('default_playlist/', views.default_playlist, name='default_playlist'),
 
     path('chats', views.chats, name='chats'),
 
+    path('delete_track/', views.delete_track, name='delete_track'),
+    path('add_track_to_playlist/', views.add_track_to_playlist, name='add_track_to_playlist'),
+    path('playlist_add_to_user/', views.playlist_add_to_user, name='playlist_add_to_user'),
+    path('playlist_delete_from_user/', views.playlist_delete_from_user, name='playlist_delete_from_user'),
+    path('track_all_playlists/', views.track_all_playlists, name='track_all_playlists'),
+
     path('userpage', views.userpage, name='userpage'),
     path('load/', views.load_track, name='load_track'),
+    path('create_playlist/', views.create_playlist, name='create_playlist'),
     # path('settings/account'),
     # path('settings/other')
 ]

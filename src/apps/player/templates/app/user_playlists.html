@@ -7,16 +7,21 @@
     <div class="title">
         <h1>Плейлисты</h1>
     </div>
+
+    <div class="playlist-add">
+        <div class="image-container-add">
+              <a href="/create_playlist/" style="width: 100px; height:100px;"><img src='/static/add_playlist.png' alt=''></a>
+        </div>
+    </div>
 {% for i in playlists %}
 
     <div class="playlist">
         <div class="image-container">
             <img src='/static/default.jpg' alt=''>
             <button id="play-img" type="submit" onclick="getPlaylistData({{ i.playlist.id }})"><i class="fa fa-play-circle fa-5x"></i></button>
-            <h3 style="transform: scale(0.3); margin-top: -50px;"><a href="{% url 'playlist' i.playlist.id %}">{{ i.playlist.name }}</a></h3>
+            <h3 style="transform: scale(0.3); margin-top: 50px;"><a href="{% url 'playlist' i.playlist.id %}">{{ i.playlist.name }}</a></h3>
         </div>
     </div>
-
 {% endfor %}
 
 </div>

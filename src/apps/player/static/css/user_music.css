@@ -34,6 +34,28 @@ html {
     background: #DA0038;
 }
 
+.title h2 {
+    display: inline-block;
+    margin-left: 80px;
+    width: 700px;
+}
+
+.add-playlist-to-user {
+    display: inline-block;
+    margin-right: 20px;
+    cursor: pointer;
+    color:black;
+}
+
+.title button {
+    display: inline-block;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
 .cell {
   height: 50px;
   background-color: transparent;

@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Prefetch
 from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
@@ -8,17 +9,6 @@ from .models import TrackList, CustomUser, UserMusic, Playlist
 from .forms import SignUpForm, AuthenticationForm, LoginForm, TrackListForm
 from django.contrib.auth.hashers import check_password
 from django.http import JsonResponse, HttpResponse
-
-
-""" main page with player """
-# def index(request):
-
-    # return render(request, 'app/index.html')
-
-
-"""1: вывод плейлиста из базы в список и отправка в джс
-   2: id += 1 и отправка в функцию джанго и вызов с бд
-   можно сделать разные id для треков и отдельные id в плейлистах для корректного вывода"""
 
 
 def signup(request):
@@ -62,100 +52,78 @@ def log_in(request):
 
     return render(request, 'app/login.html', {'form': form})
 
+
 """главная страница где по умолчанию плейлист favorite для пользователя"""
 def index(request):
     print(request.user.is_active)
     return render(request, 'app/homepage.html')
 
 
-# for /homepage and /tracks.
-def default_playlist(request):
-    current_user = request.user
-    current_playlist = Playlist.objects.get(user=current_user, name='favorite')
-    """на этой странице не нужно название плейлиста и тд, нужна вся информация про треки"""
-    current_playlist_data = {
-        'name': current_playlist.name,
-        'tracks': [],
-    }
-
-    for track in current_playlist.tracks.all():
-        track_data = {
-            'title': track.name,
-            'audio_path': track.location,
-            'path': track.location,
-            'image': track.image,
-        }
-
-        current_playlist_data['tracks'].append(track_data)
-    print(current_playlist_data)
-    return JsonResponse(current_playlist_data)
-
-
 """выбор плейлиста по нажатию по id"""
 def select_playlist(request):
     current_user = request.user
-#     """get потому что с ajax передаю??"""
     playlist_id = request.GET.get('id')
-    print(playlist_id)
-    current_playlist = UserMusic.objects.get(user=current_user, id=playlist_id)
+    favorite_playlist = Playlist.objects.get(user=current_user, name='favorite')
+    list_of_favorite_tracks = []
+    for track in favorite_playlist.tracks.all():
+        list_of_favorite_tracks.append(track.id)
+    # using favorite playlist id if None.
+    if playlist_id is None:  # if playlist is not saved in local, function in js send None instead playlist_id.
+        playlist_id = favorite_playlist.id
 
+    current_playlist = UserMusic.objects.get(user=current_user, playlist_id=playlist_id)
     current_playlist_data = {
+        'playlist_id': current_playlist.playlist.id,
+        'favorite_playlist': favorite_playlist.id,
         'name': current_playlist.playlist.name,
         'tracks': [],
     }
 
     for track in current_playlist.playlist.tracks.all():
+        default_status_value = False  # if track isn't adding in favorite playlist.
+        if track.id in list_of_favorite_tracks:  # if track is adding in favorite playlist.
+            default_status_value = True
+        # playlists where track are.
+        playlist_by_track_id = Playlist.objects.values_list('id', flat=True).filter(tracks=track.id)
         track_data = {
+            'id': track.id,
             'title': track.name,
             'path': track.location,
             'image': track.image,
             'author': track.author,
+            'status': default_status_value,
+            'playlists_for_track': list(playlist_by_track_id)
         }
 
         current_playlist_data['tracks'].append(track_data)
 
-    print(current_playlist_data)
-
     return JsonResponse(current_playlist_data)
 
 
-# def update_playlist(playlist):
-#     current_playlist_data = {
-#         'name': playlist.name,
-#         'tracks': [],
-#     }
-#
-#     for track in playlist.tracks.all():
-#         track_data = {
-#             'title': track.name,
-#             'audio_path': track.location,
-#         }
-#
-#         current_playlist_data['tracks'].append(track_data)
-#
-#     return JsonResponse(current_playlist_data)
-#
-#
-# def add_track(request):
-#     if request.method == "POST":
-#         track_id = request.POST.get('track_id')
-#         track = TrackList.objects.get(id=track_id)
-#         playlist_id = request.POST.get('playlist_id')
-#         playlist = Playlist.objects.get(id=playlist_id)
-#         playlist.tracks.add(track)
-#         playlist.save()
-#         update_playlist(playlist)
-#
-#
-# def delete_track(request):
-#     if request.method == "POST":
-#         track_id = request.POST.get('track_id')
-#         track = TrackList.objects.get(id=track_id)
-#         playlist_id = request.POST.get('playlist_id')
-#         playlist = Playlist.objects.get(id=playlist_id)
-#         playlist.tracks.remove(track)
-#         playlist.save()
-#         update_playlist(playlist)
+def add_track_to_playlist(request):  # function for adding a track to the playlist.
+    ...
+    current_user = request.user
+    track_id = request.GET.get('track_id')
+    track = TrackList.objects.get(id=track_id)
+    playlist_id = request.GET.get('playlist_id')
+    playlist = Playlist.objects.get(id=playlist_id)
+    if playlist.user == current_user:
+        playlist.tracks.add(track)
+        playlist.save()
+    return HttpResponse()
+
+
+def delete_track(request):  # function for deleting a track from playlist.
+    ...
+    current_user = request.user
+    track_id = request.GET.get('track_id')
+    track = TrackList.objects.get(id=track_id)
+    playlist_id = request.GET.get('playlist_id')
+    playlist = Playlist.objects.get(id=playlist_id)
+    if playlist.user == current_user:
+        playlist.tracks.remove(track)
+    return HttpResponse()
+
 
 @login_required(login_url='/login')
 def tracks(request):
@@ -173,12 +141,73 @@ def playlists(request):
     return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
 
 
-def playlist_tracks(request, id):
+# add playlist to user library
+def playlist_add_to_user(request):
+    ...
     current_user = request.user
-    curr_playlist = UserMusic.objects.get(id=id)
-    playlist = Playlist.objects.get(user=current_user, id=curr_playlist.playlist.id)
+    user = CustomUser.objects.get(id=current_user.id)
+    playlist_id = request.GET.get('playlist_id')
+    playlist = Playlist.objects.get(id=playlist_id)
+    user.any_playlist.add(playlist)
+    return HttpResponse()
 
-    return render(request, 'app/user_music.html', {'playlist': playlist})
+
+# delete playlist only from user library
+def playlist_delete_from_user(request):
+    ...
+    current_user = request.user
+    user = CustomUser.objects.get(id=current_user.id)
+    playlist_id = request.GET.get('playlist_id')
+    playlist = Playlist.objects.get(id=playlist_id)
+    user.any_playlist.remove(playlist)
+    return HttpResponse()
+
+
+"""if you need to make the function that will work in other pages, implement it using onClick and ajax,
+send playlist id to django from js"""
+
+
+def playlist_tracks(request, id):  # function to show all tracks in selected playlist
+    current_user = request.user
+    playlist_status = False
+    # current_user = CustomUser.objects.get(id=curr_user.id)
+    playlist = Playlist.objects.get(id=id)
+    if UserMusic.objects.filter(user=current_user, playlist=playlist).exists():  # check if object exist in db
+        playlist_status = True
+    if request.method == 'POST':
+        # for delete a playlist (full deleting from db)
+        if 'del_button' in request.POST and playlist.user == current_user:  # delete button on page where playlist tracks
+            curr_playlist = UserMusic.objects.get(user=current_user, playlist=playlist)
+            curr_playlist.delete()
+            playlist.delete()
+        return redirect('/playlists')
+    return render(request, 'app/user_music.html', {'playlist': playlist, 'playlist_status': playlist_status})
+
+
+def track_all_playlists(request):
+    ...
+    current_user = request.user
+    track_id = request.GET.get('track_id')
+
+    track_playlist_list = []
+    data_playlists_list = []
+
+    track_playlists = Playlist.objects.filter(tracks=track_id)
+    for playlist in track_playlists:
+        track_playlist_list.append(playlist.id)
+    user_playlists = Playlist.objects.filter(user=current_user)
+    for playlist in user_playlists:
+        playlist_status = False
+        if playlist.id in track_playlist_list:
+            playlist_status = True
+        playlist_info = {
+            'playlist_id': playlist.id,
+            'playlist_name': playlist.name,
+            'playlist_status': playlist_status
+        }
+        data_playlists_list.append(playlist_info)
+
+    return JsonResponse({'playlist': data_playlists_list})
 
 
 def top_playlists(request):
@@ -186,11 +215,32 @@ def top_playlists(request):
 
 
 @login_required(login_url='/login')
+def create_playlist(request):
+    ...
+    current_user = request.user
+    favorite_playlist = Playlist.objects.get(user=current_user, name='favorite')
+    if request.method == "POST":
+        playlist_name = request.POST.get('name_of_playlist')
+        playlist_description = request.POST.get('description_of_playlist')
+        playlist_image = None
+        track_list = request.POST.getlist('checks')
+        if playlist_name != '':
+            new_playlist = Playlist.objects.create(user=current_user, name=playlist_name, about=playlist_description)
+            if len(track_list) != 0:
+                for track in track_list:
+                    add_track = TrackList.objects.get(id=int(track))
+                    new_playlist.tracks.add(add_track)
+            new_playlist.save()
+            UserMusic.objects.create(user=current_user, playlist=new_playlist)
+            return redirect('/homepage')
+    return render(request, 'app/create_playlist.html', {'favorite_playlist': favorite_playlist})
+
+
+@login_required(login_url='/login')
 def load_track(request):
     current_user = request.user
     if request.method == "POST":
         form = TrackListForm(request.POST, request.FILES)
-        #todo """media root настроить чтобы файлы сохранялись в разные места"""
         if form.is_valid():
             data = form.cleaned_data
             track_file = request.FILES['track_file']

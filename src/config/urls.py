@@ -28,6 +28,11 @@ urlpatterns = [
     path('playlists/', include('apps.player.urls')),
     path('playlist/<int:id>/', include('apps.player.urls')),
     path('select_playlist/', include('apps.player.urls')),
-    path('default_playlist/', include('apps.player.urls')),
     path('load/', include('apps.player.urls')),
+    path('delete_track/', include('apps.player.urls')),
+    path('add_track_to_playlist/', include('apps.player.urls')),
+    path('create_playlist/', include('apps.player.urls')),
+    path('playlist_add_to_user/', include('apps.player.urls')),
+    path('playlist_delete_from_user/', include('apps.player.urls')),
+    path('track_all_playlists/', include('apps.player.urls')),
 ]

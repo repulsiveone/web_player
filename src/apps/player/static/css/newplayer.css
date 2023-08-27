@@ -293,6 +293,18 @@ a {
         margin-top: 20px;/* Значение может быть любым числом пикселей */
         }
 
+        .playlists-list {
+            margin-left: 15px;
+            padding: 5px;
+            font-size: 2.5em;
+        }
+
+        .add-track {
+            margin-left: 800px;
+            padding: 5px;
+            font-size: 2.5em;
+        }
+
         .playpause-track,
         .prev-track,
         .next-track {
@@ -396,6 +408,10 @@ a {
     }
 
     /* курсор мыши когда наводишь */
+    i.fa-heart-o,
+    i.fa-heart,
+    i.fa-plus,
+    i.fa-check,
     i.fa-play-circle,
     i.fa-pause-circle,
     i.fa-step-forward,
@@ -403,3 +419,31 @@ a {
     cursor: pointer;
     }
 
+.block_with_playlists { /* находится не там при масштабирование */
+    position: fixed;
+    top: 37%;
+    left: 83%;
+    transform: translate(-37%, -83%);
+    margin: 0;
+    width: 250px; height: 300px; background: #fff;
+}
+
+.playlist_view {
+  height: 20px;
+  background-color: transparent;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.playlist_view:hover {
+  height: 20px;
+  background-color: #e5e5e5;
+}
+
+.playlist_view h2 {
+    margin-left: auto;
+    margin-right: auto
+}

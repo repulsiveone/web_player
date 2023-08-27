@@ -1,20 +1,39 @@
 {% extends './base.html' %}
 
 {% block content %}
-		<div class="container-tracks">
-		  {% for track in playlist.tracks.all %}
-			<div class="cell">
-			<div class="image-container">
-				<img src='/static/default.jpg' alt=''>
-					<button id="play-img" type="submit" onclick="playcurrTrack('{{track.location}}')"><i class="fa fa-play-circle fa-5x"></i></button>
-			</div>
-                <div class='info'>
-                	<h2>{{ track.name }}</h2>
-                	<p>{{ track.author }}</p>
-                </div>
-			</div>
-		  {% endfor %}
+<form method="post">{% csrf_token %}
+<!--	{{ playlist_status }}-->
+	<div class="id-of-playlist" hidden>{{ playlist.id }}</div>
+	<div class="container-tracks">
+	<div class="title">
+	   <h2>{{ playlist.name }}</h2>
+		{% if playlist.user != request.user %}
+		<div class="add-playlist-to-user" onclick="addDelPlaylistToUser({{ playlist.id }}, '{{ playlist_status }}')">
+			{% if playlist_status == True %}  <!-- проверка есть плейлист у пользователя в библиотеке или нет -->
+			<i class="fa fa-times" aria-hidden="true"></i>
+			{% else %}
+			<i class="fa fa-plus" aria-hidden="true"></i>
+			{% endif %}
+	   </div>
+		{% endif %}
+		{% if playlist.user == request.user %}
+	   		<button name="del_button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+		{% endif %}
+	</div>
+	  {% for track in playlist.tracks.all %}
+		<div class="cell">
+		<div class="image-container">
+			<img src='/static/default.jpg' alt=''>
+				<button id="play-img" type="submit" onclick="playcurrTrack('{{track.location}}')"><i class="fa fa-play-circle fa-5x"></i></button>
 		</div>
+			<div class='info'>
+				<h2>{{ track.name }}</h2>
+				<p>{{ track.author }}</p>
+			</div>
+		</div>
+	  {% endfor %}
+	</div>
+</form>
 {% endblock %}
 
 {% block stylesheets %}
@@ -22,6 +41,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script id="test" src="/static/js_scripts/user_music.js"></script>
 {% endblock %}
-<

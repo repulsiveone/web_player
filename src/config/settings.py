@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-n-zyuwr^p10pt2xg1$chii0(xqka4fql6p^g@#1=ex5q%xj06&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.player.apps.PlayerConfig',
+    'django.contrib.postgres',
     'crispy_forms',
 ]
 
@@ -83,14 +84,42 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv('MYSQL_DB', "music_player"),
+#         'USER': os.getenv('MYSQL_USER', 'nagi'),
+#         'PASSWORD': os.getenv('MYSQL_PASSWORD'),
+#         'HOST': os.getenv('MYSQL_HOST'),
+#         'PORT': os.getenv('MYSQL_PORT', 3306)
+#     }
+# }
+
+
+# mysql database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'music_player',
         'USER': 'root',
         'PASSWORD': 'kAWABANGA',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
+
+
+# postgresql database, for docker, cause mysql doesnt work (?)
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         'NAME': 'music_player',
+#         'USER': 'postgres',
+#         'PASSWORD': 'ABD24B7D',
+        # 'HOST': 'pgdb',
+        # 'PORT': '5432',
+    # }
+# }
 
 
 # Password validation

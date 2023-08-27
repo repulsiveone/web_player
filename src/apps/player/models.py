@@ -19,6 +19,8 @@ class TrackList(models.Model):
 class Playlist(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
+    about = models.CharField(max_length=300, blank=True)
+    image = models.CharField(max_length=100, default='/static/default.jpg')
     # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     user = models.ForeignKey('player.CustomUser', on_delete=models.CASCADE)
     tracks = models.ManyToManyField(TrackList)
