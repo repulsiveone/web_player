@@ -1,0 +1,110 @@
+.container-tracks {
+    overflow-y: auto;
+    margin:50px auto;
+    width: 1000px;
+    height: 750px;
+    background: #b0c4de; /* Цвет фона */
+    color: #fff; /* Цвет текста */
+    padding: 10px; /* Поля вокруг текста */
+    border-radius: 15px; /* Уголки */
+   }
+
+.image-container {
+    width: 400px;
+}
+
+.image-container>input {
+  display: none;
+}
+
+.image-container img {
+    width: 300px;
+    height: 300px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.info-field {
+    margin-left: 400px;
+    margin-top: -250px;
+}
+
+.info-field input {
+    width: 400px;
+    height: 30px;
+    border-radius: 5px;
+}
+.sub input {
+    margin-left: 208px;
+    width: 200px;
+}
+
+.info-field h2 {
+    font-family: "Helvetica";
+    margin-top: 80px;
+}
+
+.tracks {
+    margin-top: 40px;
+    width: 950px;
+    height: 350px;
+}
+
+
+.track-cell {
+  width: 800px;
+  height: 50px;
+  background-color: transparent;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.track-cell:hover {
+  background-color: #e5e5e5;
+}
+
+.track-image-container {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.track-image-container img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.track-info h2 {
+    font-family: "Helvetica";
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.track-info p {
+    font-family: "Helvetica";
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.checkbox-round {
+    margin-left: 850px;
+    margin-top: -85px;
+    width: 17.33px;
+    height: 17.33px;
+    background-color: white;
+    border-radius: 50%;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.checkbox-round:checked {
+    background-color: gray;
+}
