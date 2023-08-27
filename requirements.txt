@@ -1,0 +1,9 @@
+Django==4.2
+django-redis
+redis
+channels-redis
+channels
+daphne
+django-extensions
+django-crispy-forms
+psycopg2
