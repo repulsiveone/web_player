@@ -5,7 +5,7 @@ from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 import json
-from .models import TrackList, CustomUser, UserMusic, Playlist
+from .models import TrackList, CustomUser, UserMusic, Playlist, PlaylistTracks
 from .forms import SignUpForm, AuthenticationForm, LoginForm, TrackListForm
 from django.contrib.auth.hashers import check_password
 from django.http import JsonResponse, HttpResponse
@@ -141,7 +141,7 @@ def playlists(request):
     return render(request, 'app/user_playlists.html', {'playlists': list_playlists})
 
 
-# add playlist to user library
+# add playlist to user library.
 def playlist_add_to_user(request):
     ...
     current_user = request.user
@@ -152,7 +152,7 @@ def playlist_add_to_user(request):
     return HttpResponse()
 
 
-# delete playlist only from user library
+# delete playlist only from user library.
 def playlist_delete_from_user(request):
     ...
     current_user = request.user
@@ -167,21 +167,57 @@ def playlist_delete_from_user(request):
 send playlist id to django from js"""
 
 
-def playlist_tracks(request, id):  # function to show all tracks in selected playlist
+def playlist_tracks(request, id):  # function to show all tracks in selected playlist.
     current_user = request.user
     playlist_status = False
-    # current_user = CustomUser.objects.get(id=curr_user.id)
+    # current_user = CustomUser.objects.get(id=curr_user.id).
     playlist = Playlist.objects.get(id=id)
-    if UserMusic.objects.filter(user=current_user, playlist=playlist).exists():  # check if object exist in db
+    if UserMusic.objects.filter(user=current_user, playlist=playlist).exists():  # check if object exist in db.
         playlist_status = True
     if request.method == 'POST':
-        # for delete a playlist (full deleting from db)
-        if 'del_button' in request.POST and playlist.user == current_user:  # delete button on page where playlist tracks
+        # for delete a playlist (full deleting from db).
+        if 'del_button' in request.POST and playlist.user == current_user:  # delete button on page where playlist tracks.
             curr_playlist = UserMusic.objects.get(user=current_user, playlist=playlist)
             curr_playlist.delete()
             playlist.delete()
+        if 'edit_button' in request.POST and playlist.user == current_user:
+            return redirect(f'/edit_playlist/{id}/')
+        
         return redirect('/playlists')
     return render(request, 'app/user_music.html', {'playlist': playlist, 'playlist_status': playlist_status})
+
+
+def edit_playlist(request, id):
+    current_user = request.user
+    # plalist_status = False (?)
+    playlist = Playlist.objects.get(id=id)
+    playlist_info = PlaylistTracks.objects.filter(playlist=id)
+    tracks_dict = {i.order_id: i.track for i in playlist_info}
+    if request.method == 'POST':
+        order_ids = request.POST.getlist('orderIds[]')
+        print(order_ids)
+
+        list_of_track_ids = []
+
+        for i in order_ids:
+            track_info = PlaylistTracks.objects.get(order_id=int(i))
+            list_of_track_ids.append(track_info.track.id)
+        counter = 1
+        for i in list_of_track_ids:
+            track = TrackList.objects.get(id=i)
+            track_info = PlaylistTracks.objects.get(order_id=counter)
+            track_info.track = track
+            track_info.save()
+            counter += 1
+
+        # ordered_track_names = [tracks_dict[int(order_id)] for order_id in order_ids]
+        # for i in range(len(ordered_track_names)):
+        #     pltr = PlaylistTracks.objects.get(order_id=i+1)
+        #     track = TrackList.objects.get(id=pltr.track.id)
+        #     print(track)
+    # for i in playlist_info:
+        # print(i.track, i.order_id)
+    return render(request, 'app/edit_playlist.html', {'playlist': playlist, 'playlist_info': playlist_info})
 
 
 def track_all_playlists(request):

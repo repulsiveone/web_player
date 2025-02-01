@@ -35,4 +35,5 @@ urlpatterns = [
     path('playlist_add_to_user/', include('apps.player.urls')),
     path('playlist_delete_from_user/', include('apps.player.urls')),
     path('track_all_playlists/', include('apps.player.urls')),
+    path('edit_playlist/<int:id>', include('apps.player.urls')),
 ]

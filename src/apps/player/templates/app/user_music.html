@@ -18,6 +18,7 @@
 		{% endif %}
 		{% if playlist.user == request.user %}
 	   		<button name="del_button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+			<button name="edit_button"><i class="fa fa-pen" aria-hidden="true"></i></button>
 		{% endif %}
 	</div>
 	  {% for track in playlist.tracks.all %}

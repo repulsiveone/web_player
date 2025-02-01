@@ -21,5 +21,4 @@ function addDelPlaylistToUser(playlistId, playlistStatus) {
         success: function(){
         }
     })
-}
-
+};

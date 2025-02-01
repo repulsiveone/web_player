@@ -23,12 +23,23 @@ class Playlist(models.Model):
     image = models.CharField(max_length=100, default='/static/default.jpg')
     # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     user = models.ForeignKey('player.CustomUser', on_delete=models.CASCADE)
-    tracks = models.ManyToManyField(TrackList)
+    tracks = models.ManyToManyField(TrackList, through='PlaylistTracks')
 
     objects = models.Manager()
 
     def __str__(self):
         return self.name
+
+
+class PlaylistTracks(models.Model):
+    id = models.AutoField(primary_key=True)
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+    track = models.ForeignKey(TrackList, on_delete=models.CASCADE)
+    order_id = models.IntegerField()
+
+    # class Meta:
+    #     unique_together = ('playlist', 'track')
+
 
 """повторяется playlist придумать как правильно создать связь"""
 class CustomUser(AbstractUser):

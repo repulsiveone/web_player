@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, BaseUserCreationForm, AuthenticationForm
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.hashers import check_password
-from .models import CustomUser, TrackList, UserMusic, Playlist
+from .models import CustomUser, TrackList, UserMusic, Playlist, PlaylistTracks
 
 
 
@@ -104,6 +104,12 @@ class UserMusicForm(forms.ModelForm):
     class Meta:
         model = UserMusic
         fields = ('user', 'playlist')
+
+    
+class PlaylistTracksForm(forms.ModelForm):
+    class Meta:
+        model = PlaylistTracks
+        fields = ('playlist', 'track', 'order_id')
 
 
 class SignUpForm(UserCreationForm):

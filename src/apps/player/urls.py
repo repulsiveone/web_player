@@ -23,6 +23,7 @@ urlpatterns = [
     path('playlist_add_to_user/', views.playlist_add_to_user, name='playlist_add_to_user'),
     path('playlist_delete_from_user/', views.playlist_delete_from_user, name='playlist_delete_from_user'),
     path('track_all_playlists/', views.track_all_playlists, name='track_all_playlists'),
+    path('edit_playlist/<int:id>/', views.edit_playlist, name='edit_playlist'),
 
     path('userpage', views.userpage, name='userpage'),
     path('load/', views.load_track, name='load_track'),

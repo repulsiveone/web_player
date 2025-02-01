@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import CustomUserCreationForm, CustomUserChangeForm, TrackListForm, UserMusicForm, PlaylistForm
-from .models import CustomUser, TrackList, UserMusic, Playlist
+from .forms import CustomUserCreationForm, CustomUserChangeForm, TrackListForm, UserMusicForm, PlaylistForm, PlaylistTracksForm
+from .models import CustomUser, TrackList, UserMusic, Playlist, PlaylistTracks
 
 
 class UserMusicInline(admin.TabularInline):
@@ -19,6 +19,12 @@ class CustomUserAdmin(UserAdmin):
     # filter_horizontal = ('any_playlist',)
 
     inlines = [UserMusicInline]
+
+
+class PlaylistTracksAdmin(admin.ModelAdmin):
+    form = PlaylistTracksForm
+    model = PlaylistTracks
+    list_display = ['playlist', 'track', 'order_id']
 
 
 class TrackListAdmin(admin.ModelAdmin):
@@ -43,3 +49,4 @@ admin.site.register(Playlist, PlaylistAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(TrackList, TrackListAdmin)
 admin.site.register(UserMusic, UserMusicAdmin)
+admin.site.register(PlaylistTracks, PlaylistTracksAdmin)
